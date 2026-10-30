@@ -1,55 +1,111 @@
 ---
-title: Cloudflare Pages 上的 Hugo 永远是旧的，除非你亲手钉住它
+title: 构建全绿，产物却是错的：Cloudflare 上的 Hugo 版本
 date: 2026-10-30
-summary: 本地 hugo 0.169 构建正常，推上去却报模板语法错误。查了两小时才发现，Cloudflare Pages 给你的 Hugo 不是你以为的那个版本。
-tags: ["部署", "Hugo", "Cloudflare"]
+summary: 本地 hugo 0.169，构建机给的是 0.147.7。第一次构建成功、日志一个字没报，但首页少了一个内联样式。根因是 math.Min 的返回类型随版本变了，eq 比较静默失败。
+tags: ["部署", "Hugo", "Cloudflare", "调试"]
 series: "把这个博客搭起来"
 seriesOrder: 2
 featured: true
 ---
 
-本地 `hugo` 跑得干干净净，`hugo server` 里每个页面都对。`git push` 之后，Cloudflare Pages 的构建日志第一行就红了：
+第一次部署上线，构建日志全绿。打开页面，200，样式正常，链接都能点。
 
-```text
-Error: failed to load modules: ...
-ERROR render of "page" failed: ...: execute of template failed:
-template: _default/single.html:12:14: executing ... at <.Fragments>: can't evaluate field Fragments
-```
+我以为完事了。直到把线上首页的 HTML 抓下来，和本地 `public/index.html` 做了一次 diff。
 
-`.Fragments` 是 Hugo 0.111 才有的东西。本地 0.169 认它，构建机不认——说明构建机上跑的根本不是 0.169。
+12052 字节对 11996 字节。差的这 56 字节里有一处是我没想要的：
 
-## 默认版本不会告诉你它有多老
-
-Cloudflare 的框架列表里，Hugo 的构建命令就是 `hugo`，输出目录 `public`，看起来什么都不用配。但官方文档在「Use a specific or newer Hugo version」一节里只写了一句：
-
-> To use a specific or newer version of Hugo, create the `HUGO_VERSION` environment variable in your Pages project > **Settings** > **Environment variables**.
-
-它没说默认给的是哪个版本。我去翻构建日志，才在开头几行看到实际的版本号——比我本地低了十几个小版本，`Fragments`、`page.Store`、新的模板查找规则全都不在。
-
-这件事麻烦的地方在于**它不会在构建开始时告诉你版本不匹配**。你要等到某个模板真的用到了新 API，才会以"模板语法错误"的形式炸给你，报错信息指向模板文件，而不是版本。
-
-## 把它钉住
-
-在 Pages 项目里加一个环境变量，值写成你本地验证过的版本：
-
-| 配置项 | 值 | 位置 |
+| 位置 | 线上 | 本地 |
 |---|---|---|
-| `HUGO_VERSION` | `0.169.0` | Settings → Environment variables → Production |
-| 构建命令 | `hugo` | Settings → Build configuration |
-| 输出目录 | `public` | 同上 |
+| 文章列表最后一行 | 缺 `style="border-bottom:none;"` | 有 |
+| 主题区最后一行 | 缺 `style="border-bottom:none;"` | 有 |
 
-注意**预览环境是独立的一套变量**。只配了 Production，`preview` 分支照样用默认版本，于是你会遇到"主站正常、PR 预览挂掉"这种更让人困惑的状态。官方文档也提了这一句：
+也就是线上首页末尾多出了两条本该被抹掉的分隔线。不放大看根本注意不到，但它证明了一件事：**构建机产出的东西，和我本地验收过的东西不是同一个。**
 
-> If you plan to use preview deployments, make sure you also add environment variables to your **Preview** environment.
+## 先排除掉最省事的解释
 
-## 顺便把 baseURL 也解决掉
+缓存？两次抓到的字节数不同，不是缓存。
 
-Hugo 的 `baseURL` 写在 `hugo.toml` 里，但 Pages 的实际域名有生产、预览、分支预览三种，写死了就有一半是错的。官方给的做法是把 `CF_PAGES_URL` 传进去：
+没设版本？构建机上跑的是哪个 hugo，页面自己会写：
 
-```bash
-hugo -b $CF_PAGES_URL
+```html
+<meta name="generator" content="Hugo 0.147.7">
 ```
 
-用这个的前提是模板里所有链接都走 `relURL` / `absURL`，而不是手写 `/posts/xxx`。我一开始有十几处硬编码的 `/writing/`，换成 `relURL` 之后才敢开这个参数——否则预览环境的链接会指向 `file://` 或者干脆 404。
+我本地是 0.169.0。顺便说，这个标签不是我模板里写的——整个 `layouts/` 目录 grep 不到 `generator` 这个字符串，是 Hugo 自己注入进去的。
 
-> 一个经验：部署相关的坑，九成不是"配置项写错了"，而是"本地和构建机不是同一个环境"。版本、时区、Node 版本、环境变量，任何一项不一致都会以一个看起来完全无关的报错出现。看到模板语法错误，先看版本，别急着改语法。
+## 构建机上的 Hugo 是哪个版本
+
+官方 build image 文档的表格里写着：Hugo 默认 **extended_0.147.7**，覆盖方式是环境变量 `HUGO_VERSION`。我第一次构建时这个变量是空的。
+
+但让我卡住的不是"版本旧了"，而是**它用旧版本构建成功了**。
+
+我原本以为版本不匹配会长这样：模板里用了新版本才有的 API，构建机报 `can't evaluate field xxx`，报错指向模板文件的行号。开发时确实撞过一次 `.Fragments` 取不到，报得清清楚楚。
+
+那种失败是好事。CI 红了，你被迫去看。
+
+## 0.147.7 和 0.169 的差别不在语法，在语义
+
+问题出在这一行：
+
+```go
+{{ $last := eq (add $i 1) (math.Min 6 $count) }}
+```
+
+意图是"如果这是最后一行，就把下边框去掉"。
+
+`math.Min` 的返回类型随版本变过——可能是 float64，也可能是 int。`eq` 拿 int 去比 float64，不成立。于是 `$last` 恒为 false，那条内联样式永远不输出。
+
+整个过程：无报错、无警告、退出码 0。日志里唯一提到版本的地方就是 `Hugo 0.147.7` 那一行，而它看起来完全正常——它是事实，不是异常。
+
+## 修法：让模板不依赖版本行为
+
+不去猜哪个版本返回什么类型，直接用整数比较：
+
+```go
+{{ $show := cond (lt $count 6) $count 6 }}
+{{ range $i, $p := first $show $posts }}
+{{ $last := eq (add $i 1) $show }}
+```
+
+`cond`、`lt`、`eq` 落在整数上的行为是稳定的，不随版本漂。
+
+## 怎么证明修好了：让"坏版本"再跑一次
+
+这里有个便利条件——**CI 当时还是 0.147.7**，我故意先不设变量。推一次修复，让它用旧版本重建，然后 diff：
+
+- 内联样式回来了：`border-bottom:none` 出现 2 次
+- 线上 12068 字节，本地 0.169 产出也是 12068 字节
+
+同一份模板在两个版本下产出的 HTML，逐行比对只剩三处差异，全部与版本号本身有关：
+
+| 差异 | 说明 |
+|---|---|
+| `<meta name="generator">` 的位置 | 0.147.7 插在 `<head>` 之后，0.169 插在 `</head>` 之前；两个版本都是自动注入 |
+| CSS 文件指纹 | Hugo 内置 minifier 版本不同，字节不同 |
+| 页脚的 `HUGO x.y.z` | 版本串 |
+
+正文结构、class、内联样式全部一致。到这一步才能说：模板已经和版本解耦了。
+
+## 然后才是钉住版本
+
+做完上面两步，钉版本已经不是"救命"，而是"让线上和本地可以逐字节比对"。
+
+变量在 **Settings → Build → Build Variables and Secrets**：
+
+| 变量 | 值 | 说明 |
+|---|---|---|
+| `HUGO_VERSION` | `0.169.0` | 三段式完整版本号，不要写 `0.169` |
+
+这里有个真容易踩的坑：**同一个项目设置里还有一处 Settings → Environment variables，那是运行时变量，构建期读不到。** Pages 时代这个变量确实放在 Environment variables 里，搬到 Workers 之后位置变了，而两处文档都还挂在网上。我甚至试过用 API 直接改——构建配置不在 Workers 令牌的作用域里，只能回 dashboard 点。
+
+设完再构建一次，三项同时变化才能确认不是缓存：
+
+| 检查项 | 之前 | 之后 |
+|---|---|---|
+| `generator` | 0.147.7 | **0.169.0** |
+| CSS 指纹 | `markdown.min.c9d5…` | **`markdown.min.9b1c…`** |
+| 页脚 | `HUGO 0.147.7` | **`HUGO 0.169.0`** |
+
+最后再 diff 一次：**12068 字节对 12068 字节，0 行差异。**
+
+> 构建成功只说明"程序跑完了"，不说明"产物是对的"。CI 全绿的时候，唯一可信的判据是拿它和一份已知正确的产物比字节——不然你连自己错了都不会知道。
