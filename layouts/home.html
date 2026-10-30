@@ -118,8 +118,9 @@
         <span>NO.</span><span>标题 / TITLE</span><span>TOPIC</span><span>DATE</span><span class="ta-r">MIN</span>
       </div>
 
-      {{ range $i, $p := first 6 $posts }}
-      {{ $last := eq (add $i 1) (math.Min 6 $count) }}
+      {{ $show := cond (lt $count 6) $count 6 }}
+      {{ range $i, $p := first $show $posts }}
+      {{ $last := eq (add $i 1) $show }}
       <a class="grid-row ledger-row" href="{{ $p.RelPermalink }}"{{ if $last }} style="border-bottom:none;"{{ end }}>
         <span class="no">{{ printf "%02d" (add $i 1) }}</span>
         <span class="tblock"><span class="t">{{ $p.Title }}</span><span class="s">{{ $p.File.ContentBaseName }}</span></span>
@@ -140,8 +141,9 @@
 
       <div class="topics">
         <div class="topics-head"><span class="l">TOPICS / 主题</span><span class="c">{{ printf "%02d" (len $taglist) }}</span></div>
-        {{ range $i, $t := first 5 $taglist }}
-        <a class="topic-row" href="{{ $t.url | relURL }}"{{ if eq (add $i 1) (math.Min 5 (len $taglist)) }} style="border-bottom:none;"{{ end }}>
+        {{ $tagN := cond (lt (len $taglist) 5) (len $taglist) 5 }}
+        {{ range $i, $t := first $tagN $taglist }}
+        <a class="topic-row" href="{{ $t.url | relURL }}"{{ if eq (add $i 1) $tagN }} style="border-bottom:none;"{{ end }}>
           <span class="n">{{ $t.name }}</span><span class="c">{{ $t.count }}</span>
         </a>
         {{ end }}
