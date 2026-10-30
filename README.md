@@ -131,6 +131,7 @@ static/
 
 scripts/
   check.mjs             frontmatter 校验
+  build.mjs             构建入口（校验 + 按分支决定 baseURL + 调用 hugo）
   hugo.mjs              定位 hugo 二进制并透传参数
   audit-classes.mjs     模板 class 与样式定义的一致性审计
   measure-align.mjs     各页横向对齐检测（需 playwright）
@@ -239,19 +240,47 @@ draft: false                   # 可选，true 则只在 dev 可见
 
 ## 部署
 
-Cloudflare Pages，从 Gitee 仓库自动构建。
+Cloudflare Pages 的 Git 集成只支持 **GitHub 和 GitLab**，不支持 Gitee。因此代码在 Gitee 上开发，同时镜像到 GitHub，Pages 连 GitHub 构建。
+
+### 仓库镜像
+
+`origin` 配置两个 push 地址，一次 `git push` 两边同步：
+
+```bash
+git remote set-url --add --push origin https://gitee.com/hucker/h_blog.git
+git remote set-url --add --push origin https://github.com/hucker/h_blog.git
+```
+
+### Pages 配置
 
 | 配置项 | 值 |
 |---|---|
-| Build command | `node scripts/check.mjs && hugo --baseURL $CF_PAGES_URL` |
+| Production branch | `main` |
+| Build command | `node scripts/build.mjs` |
 | Build output directory | `public` |
-| 环境变量 `HUGO_VERSION` | `0.169.0`（Preview 环境需单独再设一次） |
+| 环境变量 `HUGO_VERSION` | `0.169.0`（Production 与 Preview **两处都要设**） |
 
-`HUGO_VERSION` 必须显式设置，否则 Pages 会使用自带的旧版本。
+`HUGO_VERSION` 必须显式设置。v3 构建镜像里 Hugo 的默认版本是 0.147.7，本项目用到 0.169 的能力，不设会直接构建失败。
 
-`--baseURL $CF_PAGES_URL` 用本次部署自己的地址覆盖 `hugo.toml` 里的生产域名，使预览部署的 RSS、sitemap、canonical 指向预览站而非生产站。前提是所有站内链接都走 `relURL` / `absURL`。
+`HUGO_VERSION` 在 Preview 环境是独立的一套变量，只配 Production 会出现「主站正常、PR 预览挂掉」。
 
-自定义域名在 Pages 项目里添加，再按提示配置 DNS 记录；域名变更时同步修改 `hugo.toml` 的 `baseURL`。
+### baseURL 的处理
+
+`scripts/build.mjs` 按分支决定，不需要在 dashboard 里写条件语句：
+
+| 场景 | baseURL |
+|---|---|
+| 本地 `npm run build` | `hugo.toml` 里的生产域名 |
+| Pages 生产分支（`main`） | `hugo.toml` 里的生产域名 |
+| Pages 预览 / 分支预览 | `$CF_PAGES_URL`（本次部署自己的地址） |
+
+不能一律用 `$CF_PAGES_URL`：它是「当前这一次部署」的地址，生产部署时是 `<hash>.<project>.pages.dev`，不是自定义域名。一律覆盖会让正式站的 canonical、sitemap、RSS 全部指向哈希域名。
+
+前提是所有站内链接都走 `relURL` / `absURL`，没有手写 `/writing/`。
+
+### 自定义域名
+
+Pages 项目 → Custom domains → 添加 `huc.site`，按提示配置 DNS 记录。域名变更时同步修改 `hugo.toml` 的 `baseURL`。
 
 ---
 

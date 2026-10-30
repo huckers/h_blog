@@ -130,23 +130,78 @@ W=768 HEADFUL=1 npm run overflow
 
 ---
 
-## 5. baseURL 与预览部署
+## 5. baseURL：不能一律用 $CF_PAGES_URL
 
 `hugo.toml` 里写的是生产域名，但 Pages 一次构建会产出三种地址：生产、预览、分支预览。
 
-写死的话，预览部署里的 RSS、sitemap、canonical 全部指向生产站——在预览里点分享链接会跳回主站。
-
-`$CF_PAGES_URL` 是 Pages 注入的、本次部署自己的地址，`--baseURL` 用它可以覆盖配置：
+写死的话，预览部署里的 RSS、sitemap、canonical 全部指向生产站——在预览里点分享链接会跳回主站。所以第一版把构建命令写成：
 
 ```bash
 hugo --baseURL $CF_PAGES_URL
 ```
 
-实测（`-d .tmp-preview`）：sitemap 与 canonical 都跟着覆盖。本地 `npm run build` 仍用 `hugo.toml` 里的生产域名，不受影响。
+**这是错的。** 官方文档对 `CF_PAGES_URL` 的定义是 `<url-of-current-deployment>`——「当前这一次部署」的地址，生产部署时它是 `<hash>.<project>.pages.dev`，不是自定义域名。
+
+一律覆盖的后果：正式站的 canonical、sitemap、RSS 全部指向那个哈希域名。文章被搜索引擎收录时记的是 `<hash>.h-blog.pages.dev`，RSS 订阅者拿到的链接也全是它。
+
+正确做法是按分支区分：
+
+| 场景 | baseURL |
+|---|---|
+| 本地构建 | `hugo.toml` |
+| 生产分支（`main`） | `hugo.toml`（自定义域名） |
+| 预览 / 分支预览 | `$CF_PAGES_URL` |
+
+`CF_PAGES_BRANCH` 是 Pages 注入的当前分支名，用它判断。这段逻辑放在 `scripts/build.mjs` 里，dashboard 的构建命令保持一行 `node scripts/build.mjs`——把条件语句塞进 dashboard 输入框既难读也难测。
+
+实测三种场景：
+
+| 环境变量 | 生效 baseURL |
+|---|---|
+| 无 | `https://huc.site/` |
+| `CF_PAGES=1 CF_PAGES_BRANCH=main` | `https://huc.site/` |
+| `CF_PAGES=1 CF_PAGES_BRANCH=feature-x CF_PAGES_URL=https://a1b2c3.…pages.dev` | `https://a1b2c3.…pages.dev/` |
 
 前提是模板里所有站内链接都走 `relURL` / `absURL`，没有手写 `/writing/`——否则覆盖了也一样错。
 
 一个经验：部署相关的坑，九成不是「配置项写错了」，而是「本地和构建机不是同一个环境」。版本、时区、Node 版本、环境变量，任何一项不一致都会以一个看起来完全无关的报错出现。看到模板语法错误，先看版本，别急着改语法。
+
+---
+
+## 6. Gitee 接不了 Pages 的 Git 集成
+
+想当然会以为「填个仓库地址就行」。官方文档原文：
+
+> The Git integration enables automatic builds and deployments every time you push a change to your connected **GitHub** or **GitLab** repository.
+
+> Pages offers support for GitHub and GitLab.
+
+只有这两家，Gitee 没有入口。剩下的路只有三条：
+
+| 方案 | 保留自动构建 | 代价 |
+|---|---|---|
+| GitHub / GitLab 镜像，Pages 连镜像仓 | 是 | 需要一个额外账号；可用 `git remote set-url --add --push` 一次推两边 |
+| Direct Upload + 外部 CI | 是（构建在外部跑） | 项目**不能**改回 Git 集成，没有 PR 预览 |
+| 本地手动上传 | 否 | 每次发文手动跑 `wrangler pages deploy` |
+
+镜像方案是唯一既保留原生集成、又不牺牲推送体验的。
+
+### Direct Upload 是单向的
+
+官方文档两处都写了：
+
+- Git 集成的项目：`You cannot switch to Direct Upload later`
+- Direct Upload 的项目：`If you choose Direct Upload, you cannot switch to Git integration later. You will have to create a new project`
+
+所以选之前要想清楚，选错了只能重建项目。自定义域名的 CNAME 还得先删掉，否则会指向一个已不存在的项目。
+
+---
+
+## 7. Hugo 版本必须钉住
+
+v3 构建镜像里 Hugo 的默认版本是 **0.147.7**（官方 build image 文档），本项目用的是 0.169。不设 `HUGO_VERSION` 会以一个指向模板文件的报错失败，而报错信息完全不提版本。
+
+而且 `HUGO_VERSION` 在 Production 和 Preview 是**两套独立变量**。只配 Production 会出现「主站正常、PR 预览挂掉」，更难排查。
 
 ---
 
