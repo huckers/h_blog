@@ -140,6 +140,7 @@ scripts/
 
 hugo.toml               站点配置
 wrangler.toml           Workers 部署配置（静态资源目录、404 处理）
+package-lock.json       零依赖锁文件，供 CI 的依赖安装步骤使用
 prototype/  site/       设计稿
 ```
 
@@ -285,17 +286,21 @@ not_found_handling = "404-page"
 
 ### dashboard 设置
 
+Worker 名称必须是 `h-blog`，与 `wrangler.toml` 的 `name` 一致；它同时决定默认访问地址 `https://h-blog.<账户子域>.workers.dev`。
+
 | 配置项 | 值 |
 |---|---|
 | Git branch | `main` |
 | Build command | `node scripts/build.mjs` |
-| Deploy command | `npx wrangler deploy` |
-| Preview command | `npx wrangler preview` |
+| Deploy command | `npx wrangler deploy`（默认值，不改） |
+| Preview command | `npx wrangler preview`（默认值，不改；仅非生产分支触发） |
 | Build variable | `HUGO_VERSION` = `0.169.0` |
 
 `HUGO_VERSION` 必须设。Workers Builds 镜像预装的是 **Hugo extended 0.147.7**，本项目用到 0.169 的能力，不设会以一个指向模板文件的报错失败，报错里不提版本。
 
 变量位置是 **Settings → Build → Build Variables and Secrets**，不是 Settings → Environment variables——后者是运行时变量，构建期读不到。
+
+跑 Build command 之前 Workers Builds 会自动安装一次依赖。仓库根目录的 `package-lock.json` 是一个**零依赖锁文件**（只记录根包，不列任何依赖），作用就是让这一步有确定的输入、安装结果为空。项目本身没有任何运行期或构建期依赖，`scripts/*.mjs` 只用 Node 内置模块。
 
 ### baseURL 的处理
 
