@@ -43,8 +43,8 @@ const PAGES = [
 
 // 1920 必测：--page 是 1440，只有视口宽于画布时 margin:auto 才会产生
 // 左右外边距，滚动条有无造成的居中差（7.5px）才会显形。
-// 390 是移动端断点，主要看横向溢出有没有复发。
-const WIDTHS = [1920, 1440, 1423, 390];
+// 1280 / 768 是常见平板与笔记本档位，390 是移动端断点，主要看横向溢出有没有复发。
+const WIDTHS = [1920, 1440, 1423, 1280, 768, 390];
 
 const browser = await chromium.launch({
   headless: process.env.HEADFUL ? false : true,

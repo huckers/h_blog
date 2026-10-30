@@ -2,21 +2,202 @@
 
 个人技术博客。Hugo 构建，模板手写，正文 Markdown。
 
-设计稿在 `prototype/`（当前版本，落地依据）和 `site/`（上一版，留档）。
+写下 `.md` 文件、推送到远程，就是发布——没有后台、没有数据库、没有第二步。
+
+| 项 | 值 |
+|---|---|
+| 站点 | <https://huc.site> |
+| 源码 | <https://gitee.com/hucker/h_blog> |
+| 设计稿 | `prototype/`（当前版本，落地依据）、`site/`（上一版，留档） |
 
 ---
 
-## 写一篇文章，然后发布
+## 技术栈
 
-```bash
-npm run new -- content/writing/my-new-post.md   # 从 archetype 生成骨架
-npm run dev                                     # 本地预览 http://localhost:1313
-npm run build                                   # 校验 + 构建
+| 层 | 选型 | 说明 |
+|---|---|---|
+| 生成器 | Hugo 0.169 extended | Go Template 手写模板，不用主题 |
+| 样式 | 手写 CSS | 无框架，两层：设计系统 + Markdown 映射 |
+| 交互 | 原生 JS | 约 250 行，无框架、无依赖 |
+| 检索 | 构建期 JSON 索引 | 查询全在浏览器本地完成 |
+| 部署 | Cloudflare Pages | 纯静态 |
+
+构建耗时 200ms 量级。全流程零运行时依赖，不需要 `npm install`。
+
+## 功能
+
+### 页面
+
+| 路由 | 内容 |
+|---|---|
+| `/` | 首页：主稿 + 台账 + 主题/现在/RSS 侧栏 |
+| `/writing/` | 文章列表，双栏目录，每页 12 篇 |
+| `/writing/:slug/` | 文章页：正文 + 右侧 OUTLINE / RELATED / SHARE |
+| `/archive/` | 归档：按年分组，含统计与技术档案 |
+| `/series/` | 系列总览 |
+| `/series/:term/` | 系列详情：编号 + 分期刻度 + 篇目列表 |
+| `/tags/`、`/tags/:term/` | 主题总览与单项 |
+| `/about/` | 关于：正文 + 规格表 + 站点信息 |
+| `/search/` | 站内检索 |
+| `/404.html` | 404 |
+
+同时产出 `index.xml`（RSS）、`index.json`（检索索引）、`sitemap.xml`、`robots.txt`。
+
+### 检索
+
+索引在构建时生成，含标题、URL、日期、标签、摘要和正文前 1500 字。支持：
+
+- 裸词 — 空格分隔即交集
+- `"短语"` — 精确匹配
+- `tag:部署` — 按主题限定
+- 结果按相关度打分，命中词高亮
+- 查询同步到 URL（`?q=`），链接可分享
+- 任意页面按 <kbd>Cmd/Ctrl</kbd> + <kbd>K</kbd> 直达
+
+### 阅读体验
+
+- `##` 二级标题自动编号 `§ 01`、`§ 02`，锚点由 `anchorize` 生成，与目录一致
+- 目录栏跟随阅读位置高亮当前小节
+- 代码块深色区块 + 语言标签（取自围栏语言标识）
+- 相关阅读按标签交集自动取前 3 篇
+- 阅读时长按 400 字/分钟估算
+- 一键复制当前链接
+
+### 站点能力
+
+- 全站无追踪脚本、无 Cookie、无外部字体请求
+- SEO：canonical、Open Graph、JSON-LD（`Person` + `BlogPosting`）、RSS
+- 响应式：1920 / 1440 / 1280 / 768 / 390 均无横向溢出
+
+### 设计系统
+
+纸感暖底色配砖红信号色，正文区浅色、页脚深色。
+
+| 变量 | 值 | 用途 |
+|---|---|---|
+| `--paper` | `#F2EFE7` | 画布底色 |
+| `--ink` | `#16181A` | 标题与主体色块 |
+| `--body` | `#3A362F` | 正文 |
+| `--muted` | `#5A554C` | 次级文字 |
+| `--hair` | `#CBC4B4` | 分隔线 |
+| `--signal` | `#C4461F` | 强调、引用条、编号 |
+| `--link` | `#23596B` | 行内链接 |
+
+版心 1440px，左右留白 48px；窄屏降至 18px。字族全部走系统字体，中文细字重通过 `@font-face { src: local() }` 绑定本地「微软雅黑 Light」，不加载远程字体。
+
+---
+
+## 目录结构
+
+```
+content/
+  writing/*.md          文章（唯一的内容源）
+  about.md              关于页
+  archive.md            归档页      （layout: archive）
+  search.md             检索页      （layout: search）
+
+layouts/
+  baseof.html           骨架：head + header + main + footer
+  home.html             首页
+  list.html             文章列表（含分页）
+  single.html           文章页（含目录、相关阅读、上下篇）
+  404.html              404
+  index.json            检索索引（构建期）
+  rss.xml               RSS
+  _markup/
+    render-table.html   表格包裹层，窄屏横向滚动
+  _default/
+    about.html          关于页
+    archive.html        归档页
+    search.html         检索页
+    terms.html          标签 / 系列总览
+    taxonomy.html       标签 / 系列单项
+  partials/
+    head.html           meta、OG、JSON-LD、CSS 资源管道
+    header.html         页头
+    footer.html         页脚
+    tag-list.html       标签归一（保留大小写）
+    readtime.html       阅读时长
+    wordcount.html      字数
+
+assets/css/
+  proto.css             设计系统：布局、组件、配色
+  markdown.css          Markdown 标签 → 视觉映射、Chroma 配色、响应式
+
+static/
+  js/app.js             代码块标签、快捷键、目录跟随、复制
+  js/search.js          本地检索
+  favicon.svg
+
+scripts/
+  check.mjs             frontmatter 校验
+  hugo.mjs              定位 hugo 二进制并透传参数
+  audit-classes.mjs     模板 class 与样式定义的一致性审计
+  measure-align.mjs     各页横向对齐检测（需 playwright）
+  find-overflow.mjs     窄视口溢出元素定位（需 playwright）
+  shots.mjs             批量截首屏（需 playwright）
+
+hugo.toml               站点配置
+prototype/  site/       设计稿
 ```
 
-推到 Gitee，Cloudflare Pages 自动构建上线。**没有第二步**——文件落盘就是发布动作。
+## 构建管线
 
-### frontmatter
+```
+content/writing/*.md
+   │  frontmatter 校验（check.mjs，不通过则中断）
+   ▼
+Hugo
+   ├─ Go Template 渲染  →  HTML
+   ├─ Chroma 高亮       →  class 输出，配色由 markdown.css 接管
+   ├─ Taxonomies        →  /tags/ /series/
+   └─ 资源管道           →  CSS minify + fingerprint
+   ▼
+public/  →  Cloudflare Pages
+```
+
+模板层次：`baseof.html` 定义骨架，各页面用 `{{ define "main" }}` 填充；导航、页脚、meta 全部走 `partials/`。
+
+样式分两层：`proto.css` 只管设计系统（版心、网格、组件），`markdown.css` 只管把裸 HTML 标签映射成设计稿的样子。写文章时不需要记 CSS 类。
+
+---
+
+## 使用
+
+### 环境要求
+
+Hugo 0.169 extended。`scripts/hugo.mjs` 按 `HUGO_BIN` → `~/.hugo-bin/` → `PATH` 顺序查找。
+
+```bash
+winget install Hugo.Hugo.Extended
+# 或下载 https://github.com/gohugoio/hugo/releases 解压到 ~/.hugo-bin/
+```
+
+Node.js 仅用于校验脚本，无第三方依赖。
+
+### 命令
+
+| 命令 | 作用 |
+|---|---|
+| `npm run dev` | 本地预览 <http://localhost:1313>，含草稿 |
+| `npm run build` | 校验 + 构建到 `public/` |
+| `npm run check` | 只跑 frontmatter 校验 |
+| `npm run new -- content/writing/xxx.md` | 从 archetype 生成文章骨架 |
+| `npm run audit` | 检查模板 class 是否都有样式定义 |
+| `npm run align` | 各页横向对齐检测（需先起服务，需 playwright） |
+| `npm run overflow` | 定位窄视口撑宽页面的元素 |
+| `npm run preview` | 本地预览（不含草稿） |
+
+### 写一篇文章
+
+```bash
+npm run new -- content/writing/my-new-post.md
+npm run dev
+```
+
+**文件名即 URL**：`my-new-post.md` → `/writing/my-new-post/`。必须是 ASCII slug——中文文件名会让 URL 变成一长串百分号编码。
+
+#### frontmatter
 
 ```yaml
 ---
@@ -31,166 +212,48 @@ draft: false                   # 可选，true 则只在 dev 可见
 ---
 ```
 
-| 字段 | 必填 | 约束 | 写错的后果 |
-|---|---|---|---|
-| `title` | 是 | 4–90 字 | 太长会在正文列折成四行；整行漏掉 → 标题空白，不报错 |
-| `date` | 是 | `YYYY-MM-DD` | 格式错会被 Hugo 拦住（exit 1）；**整行漏掉不拦**，日期变 0001 |
-| `summary` | 是 | 10–300 字 | 漏掉不报错，列表页副标题、meta、RSS 同时变空 |
-| `tags` | 是 | 数组，1–6 项 | 漏掉或写成字符串 → 模板报错，但指向模板行号，不说哪篇 |
-| `series` / `seriesOrder` | 否 | 成对出现 | 系列页按日期排，不按编号 |
-
-**文件名即 URL**：`my-new-post.md` → `/writing/my-new-post/`。必须是 ASCII slug，中文文件名会让 URL 变成一长串百分号编码。
-
----
-
-## 校验脚本
-
-`scripts/check.mjs`，零依赖，`npm run build` 会先跑它。
-
-存在的唯一原因：**Hugo 只在「字段存在、值不合法」时报错。**
-
-实测（hugo 0.169）——`date` 写成 `2026.10.30` 会打 ERROR 并返回退出码 1，CI 能拦住。但把 `date` 那一行整个删掉，退出码是 **0**，页面照常生成，日期渲染成 `0001.01.01`，直接上线。`title`、`summary` 同理：漏掉不报错，只是那处变空。
-
-多删一行比写错一个字符容易得多，而这恰好是 Hugo 不管的那一类。
-
-脚本把这些变成硬失败：
-
-```
-x content/writing/xxx.md
-    date 格式错误：「2026.10.30」。必须是 YYYY-MM-DD，写成点号会被当成零值排到 0001 年
-```
-
----
-
-## 样式审计
-
-```bash
-npm run audit
-```
-
-扫一遍模板，找出「class 写了、但 CSS 里完全没有定义」的地方。这类问题不会报错，页面上只是那一块退回浏览器默认样式——比如 `.labelrow` 原本只在 `.page-head` 作用域下定义，放到 `series-head` 里就整个失效，标题、字号、字色全丢。
-
-纯语义容器（`.outline`、`.topics`）在脚本里有白名单，不算缺失。
-
----
-
-## 横向对齐检查
-
-```bash
-npm run dev            # 另开一个终端
-npm run align          # 默认测 http://localhost:1414
-```
-
-这个脚本查的是一件很难靠眼睛发现、但一眼就能感觉到的事：**切换页面时页头页脚会不会左右晃一下**。
-
-判断标准不是「左边界等于 0」，而是「同一视口下十个页面的左边界完全一致」。视口宽于 `--page`（1440px）时，居中容器的左边距是 `(clientWidth - 1440) / 2`，只要各页的 `clientWidth` 不同，这个值就不同。
-
-而 `clientWidth` 会因为**垂直滚动条**而不同：
-
-| 条件 | clientWidth（1920 屏） | 居中左边界 |
+| 字段 | 必填 | 约束 |
 |---|---|---|
-| 内容高于视口，有滚动条 | 1905 | 232.5 |
-| 内容恰好一屏，无滚动条 | 1920 | 240 |
+| `title` | 是 | 4–90 字 |
+| `date` | 是 | `YYYY-MM-DD` |
+| `summary` | 是 | 10–300 字 |
+| `tags` | 是 | 数组，1–6 项 |
+| `series` / `seriesOrder` | 否 | 成对出现 |
+| `featured` | 否 | 布尔，首页主稿 |
+| `draft` | 否 | 布尔 |
 
-差 **7.5px**。短页面整体偏右，来回切换就是那个"晃一下"。
+`npm run build` 会先跑 `scripts/check.mjs`，字段缺失、格式错误、`title` 含裸冒号都会中断构建。
 
-修法在 `proto.css`：
+### 排版约定
 
-```css
-html{ overflow-y: scroll; }   /* 滚动条常驻，两态归一 */
-```
+写文章时不用记 CSS 类，Markdown 标签自动映射到设计稿的视觉：
 
-同时删掉了 `body{ min-width: 1440px }`。那一条在视口不足 1440 时（笔记本 1440 屏扣掉 15px 滚动条就只剩 1425）会把 body 顶到 1440，整页横向溢出 15px——每个 `margin:auto` 的容器都跟着错位。
-
-**测的时候必须开有头浏览器**（`HEADFUL=1 npm run align`）。无头模式用 overlay 滚动条，`clientWidth` 恒等于视口宽，症状被完全掩盖——之前就是在无头下测了十页全绿，才误判了一遍。
-
-`BROKEN=1 npm run align` 会把旧写法注回去做 A/B 对照，用来确认修复确实对症，不是顺手改的。
-
-### 溢出定位
-
-```bash
-npm run overflow               # 默认 390 宽
-W=768 HEADFUL=1 npm run overflow
-```
-
-列出窄视口下右边界超过 `clientWidth` 的元素，按超出距离排序。页面报"横向溢出 Npx"时用它找元凶。
-
-注意它会把**被 `overflow` 裁剪掉**的宽子元素也报出来（比如 `.tablewrap` 里的表格本身比容器宽是正常的），所以看的是最外层那一条。
-
-### 移动端溢出的三个来源
-
-都是同一个性质：**桌面端用固定宽度或 `white-space:pre` 排版，窄屏没给出口**。
-
-| 元凶 | 症状 | 修法 |
-|---|---|---|
-| `.entry{width:648px}` | 列表页溢出 94px | 760px 断点下改 `width:100%`，`.entry .meta` 两行堆叠 |
-| `.pre{white-space:pre}` | 工具栏长文案不换行，溢出 94px | 全局改 `pre-wrap`：空格照留，放不下才换行 |
-| 表格无包裹层 | 宽表格溢出 39px | 加 `layouts/_markup/render-table.html` 包一层 `.tablewrap` |
-
-第三条值得记一笔：`.md .tablewrap{overflow-x:auto}` 这段 CSS **早就写好了**，但从来没有 render hook 生成那个包裹层，所以是纯死代码。CSS 有、HTML 没有，`npm run audit` 也查不出来（它只查反方向：class 有、样式没有）。
+- `##` 二级标题 → 自动编号 `§ 01`、`§ 02`（CSS counter，不用手写）
+- 围栏代码块 → 深色区块 + 顶部语言标签（语言必须标）
+- `>` 引用 → 左侧信号红条 + NOTE 卡片
+- `-` 列表 → 红色长破折号
+- `1.` 列表 → 衬线体红色序号
+- 表格 → 1px 细线、等宽表头；窄屏横向滚动
 
 ---
 
-## 部署到 Cloudflare Pages
+## 部署
+
+Cloudflare Pages，从 Gitee 仓库自动构建。
 
 | 配置项 | 值 |
 |---|---|
 | Build command | `node scripts/check.mjs && hugo --baseURL $CF_PAGES_URL` |
 | Build output directory | `public` |
-| 环境变量 `HUGO_VERSION` | `0.169.0`（必须设，且 **Preview 环境也要单独设**） |
+| 环境变量 `HUGO_VERSION` | `0.169.0`（Preview 环境需单独再设一次） |
 
-`HUGO_VERSION` 不能省。不设的话 Pages 会用一个很老的默认版本，模板里用到 `.Fragments`、新模板查找规则之类的新 API 就会直接报错，而报错信息指向模板文件，不指向版本。
+`HUGO_VERSION` 必须显式设置，否则 Pages 会使用自带的旧版本。
 
-构建命令前挂 `check.mjs` 是为了让校验在 CI 上也生效——只在本地跑没有意义，文章是推上去才上线的。
+`--baseURL $CF_PAGES_URL` 用本次部署自己的地址覆盖 `hugo.toml` 里的生产域名，使预览部署的 RSS、sitemap、canonical 指向预览站而非生产站。前提是所有站内链接都走 `relURL` / `absURL`。
 
-### baseURL 为什么要覆盖
-
-`hugo.toml` 里写的是生产域名 `https://huc.site/`，但 Pages 一次构建会产出三种地址：生产、预览、分支预览。写死的话，预览部署里的 RSS、sitemap、canonical 全部指向生产站——你在预览里点分享链接，跳回主站。
-
-`$CF_PAGES_URL` 是 Pages 注入的、本次部署自己的地址，`--baseURL` 用它可以覆盖掉配置里的值。**前提是模板里所有站内链接都走 `relURL` / `absURL`，没有手写 `/writing/`**，否则覆盖了也一样错。
-
-本地构建照旧用 `hugo.toml` 里的生产域名，跑 `npm run build` 不受影响。
+自定义域名在 Pages 项目里添加，再按提示配置 DNS 记录；域名变更时同步修改 `hugo.toml` 的 `baseURL`。
 
 ---
-
-## 目录
-
-```
-content/writing/      文章（唯一的内容源）
-content/about.md      关于页
-content/archive.md    归档页（layout: archive）
-content/search.md     检索页（layout: search）
-layouts/              Go Template
-  baseof.html         骨架
-  home.html           首页
-  single.html         文章页
-  list.html           列表页
-  _markup/
-    render-table.html 表格包 .tablewrap（窄屏横向滚动）
-  _default/           terms / taxonomy / archive / search / about
-  partials/           header / footer / head / tag-list / readtime
-assets/css/
-  proto.css           设计系统（从 prototype 迁来，改了字体加载）
-  markdown.css        Markdown 正文排版 + Chroma 配色 + 响应式
-scripts/
-  check.mjs           frontmatter 校验
-  hugo.mjs            找 hugo 二进制并透传参数
-  audit-classes.mjs   模板 class 是否都有样式定义
-  measure-align.mjs   各页横向对齐实测（需 playwright）
-  find-overflow.mjs   窄视口下定位撑宽页面的元素（需 playwright）
-  shots.mjs           批量截首屏到 .shots/（需 playwright）
-```
-
-## 排版约定
-
-写文章时不用记 CSS 类，Markdown 标签会自动映射到设计稿的视觉：
-
-- `##` 二级标题 → 自动编号成 `§ 01`、`§ 02`（CSS counter，不用手写）
-- 围栏代码块 → 深色区块 + 顶部语言标签（JS 注入，语言必须标）
-- `>` 引用 → 左侧信号红条 + NOTE 卡片
-- `-` 列表 → 红色长破折号
-- `1.` 列表 → 衬线体红色序号
-- 表格 → 1px 细线，等宽表头
 
 ## 授权
 
@@ -201,9 +264,9 @@ scripts/
 | 文字 | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) | `content/`、`prototype/`、`site/` |
 | 代码 | [MIT](./LICENSE-CODE) | `layouts/`、`scripts/`、`assets/css/`、`static/js/`、正文代码块 |
 
-分开的原因是 Creative Commons 官方 FAQ 明确**不建议**把 CC 用于软件——不含源码分发条款、不涉及专利、与主流软件许可证不兼容。这不是自创规则。
+文字部分的授权说明见 [LICENSE](./LICENSE)，代码部分的全文见 [LICENSE-CODE](./LICENSE-CODE)。
 
-参数在 `hugo.toml`，模板从 `licenseUrl` / `codeLicense` / `codeLicenseUrl` 读：
+许可证参数在 `hugo.toml`：
 
 ```toml
 license        = "CC BY-NC 4.0"
@@ -212,13 +275,4 @@ codeLicense    = "MIT"
 codeLicenseUrl = "https://gitee.com/hucker/h_blog/blob/main/LICENSE-CODE"
 ```
 
-页脚和关于页的规格表都带 `rel="license"` 链接——CC 的署名条款要求「附上许可证链接」，自己先做对，别人转载时才有地方链回来。
-
-## 本地没有 hugo 时
-
-```bash
-winget install Hugo.Hugo.Extended
-# 或下载 https://github.com/gohugoio/hugo/releases 解压到 ~/.hugo-bin/
-```
-
-`scripts/hugo.mjs` 会按 `HUGO_BIN` → `~/.hugo-bin/` → `PATH` 的顺序找。
+页脚与关于页规格表的许可证均带 `rel="license"` 链接。
