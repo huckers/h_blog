@@ -1,0 +1,17 @@
+# Cloudflare Workers 配置：纯静态资源，无 Worker 脚本。
+#
+# name 必须与 dashboard 里的 Worker 项目名完全一致，否则 Workers Builds 会构建失败
+#（官方文档 Troubleshoot > Workers name requirement）。
+name = "h-blog"
+compatibility_date = "2026-10-30"
+
+[assets]
+# Hugo 的输出目录
+directory = "./public"
+# 请求不匹配任何静态文件时，返回最近的 404.html 并保持 404 状态码。
+# 不设的话是纯文本的 "404 Not Found"，站点自己的 404 页面用不上。
+not_found_handling = "404-page"
+
+# html_handling 用默认值 auto-trailing-slash：
+# /writing/foo -> 命中 /writing/foo/index.html，/writing/foo 自动补斜杠跳转。
+# Hugo 生成的正是 index.html 结构，不需要改。

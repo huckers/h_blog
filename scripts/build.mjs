@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 /**
- * 构建入口。本地和 Cloudflare Pages 共用这一条命令，不用在 dashboard 里写条件语句。
+ * 构建入口。本地和 Cloudflare 共用这一条命令，不用在 dashboard 里写条件语句。
  *
  * baseURL 的处理是这里存在的理由：
- *   本地构建            → 用 hugo.toml 里的生产域名
- *   Pages 生产分支      → 用 hugo.toml 里的生产域名（自定义域名 huc.site）
- *   Pages 预览/分支预览 → 用 $CF_PAGES_URL（本次部署自己的哈希域名）
+ *   本地构建              → hugo.toml 里的生产域名
+ *   Workers Builds        → hugo.toml 里的生产域名（生产与预览都用）
+ *   Pages 生产分支        → hugo.toml 里的生产域名
+ *   Pages 预览/分支预览   → $CF_PAGES_URL（本次部署自己的哈希域名）
  *
- * 为什么不能一律用 $CF_PAGES_URL：官方文档写的是
- *   "CF_PAGES_URL: <url-of-current-deployment>"
- * 生产部署时它是 <hash>.h_blog.pages.dev，不是自定义域名。
- * 一律覆盖会让正式站的 canonical、sitemap、RSS 全部指向哈希域名。
+ * 为什么 Workers 不用部署地址覆盖：官方文档列出的 Workers Builds 默认变量只有
+ *   CI / WORKERS_CI / WORKERS_CI_BUILD_UUID / WORKERS_CI_COMMIT_SHA / WORKERS_CI_BRANCH，
+ * 没有「本次部署 URL」。预览地址是部署时才分配的，构建期拿不到。
+ * 预览继续用生产域名的 canonical，副作用是预览页不会被当成独立页面收录——这是想要的结果。
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
@@ -39,7 +40,8 @@ function readProdBaseURL() {
 
 const PROD_BRANCH = process.env.PROD_BRANCH || 'main';
 const onPages = Boolean(process.env.CF_PAGES);
-const branch = process.env.CF_PAGES_BRANCH || '';
+const onWorkers = Boolean(process.env.WORKERS_CI);
+const branch = process.env.CF_PAGES_BRANCH || process.env.WORKERS_CI_BRANCH || '';
 const prodURL = readProdBaseURL();
 
 const args = ['build', '--cleanDestinationDir'];
@@ -49,10 +51,13 @@ let effective = prodURL;
 if (onPages && branch && branch !== PROD_BRANCH && process.env.CF_PAGES_URL) {
   effective = process.env.CF_PAGES_URL;
   args.push('--baseURL', effective);
-  note = `预览部署 · 分支 ${branch} · baseURL = $CF_PAGES_URL`;
+  note = `Pages 预览部署 · 分支 ${branch} · baseURL = $CF_PAGES_URL`;
 } else if (onPages) {
   if (prodURL) args.push('--baseURL', prodURL);
-  note = `生产部署 · 分支 ${branch || PROD_BRANCH} · baseURL = hugo.toml`;
+  note = `Pages 生产部署 · 分支 ${branch || PROD_BRANCH} · baseURL = hugo.toml`;
+} else if (onWorkers) {
+  if (prodURL) args.push('--baseURL', prodURL);
+  note = `Workers Builds · 分支 ${branch || PROD_BRANCH} · baseURL = hugo.toml`;
 } else {
   note = `本地构建 · baseURL = hugo.toml`;
 }

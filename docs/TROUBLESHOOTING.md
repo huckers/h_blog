@@ -130,9 +130,9 @@ W=768 HEADFUL=1 npm run overflow
 
 ---
 
-## 5. baseURL：不能一律用 $CF_PAGES_URL
+## 5. baseURL：不能一律用部署 URL
 
-`hugo.toml` 里写的是生产域名，但 Pages 一次构建会产出三种地址：生产、预览、分支预览。
+`hugo.toml` 里写的是生产域名，但一次构建可能产出多种地址：生产、预览、分支预览。
 
 写死的话，预览部署里的 RSS、sitemap、canonical 全部指向生产站——在预览里点分享链接会跳回主站。所以第一版把构建命令写成：
 
@@ -144,23 +144,25 @@ hugo --baseURL $CF_PAGES_URL
 
 一律覆盖的后果：正式站的 canonical、sitemap、RSS 全部指向那个哈希域名。文章被搜索引擎收录时记的是 `<hash>.h-blog.pages.dev`，RSS 订阅者拿到的链接也全是它。
 
-正确做法是按分支区分：
+正确做法是按分支区分，逻辑放在 `scripts/build.mjs`，dashboard 的构建命令保持一行 `node scripts/build.mjs`——把条件语句塞进 dashboard 输入框既难读也难测。
 
-| 场景 | baseURL |
+| 场景 | 生效 baseURL |
 |---|---|
-| 本地构建 | `hugo.toml` |
-| 生产分支（`main`） | `hugo.toml`（自定义域名） |
-| 预览 / 分支预览 | `$CF_PAGES_URL` |
+| 本地 | `hugo.toml` |
+| Pages 生产分支 | `hugo.toml` |
+| Pages 预览 / 分支预览 | `$CF_PAGES_URL` |
+| Workers Builds（生产与预览） | `hugo.toml` |
 
-`CF_PAGES_BRANCH` 是 Pages 注入的当前分支名，用它判断。这段逻辑放在 `scripts/build.mjs` 里，dashboard 的构建命令保持一行 `node scripts/build.mjs`——把条件语句塞进 dashboard 输入框既难读也难测。
+Workers 那一行是查了官方 build 文档才定下来的：Workers Builds 注入的默认变量只有 `CI`、`WORKERS_CI`、`WORKERS_CI_BUILD_UUID`、`WORKERS_CI_COMMIT_SHA`、`WORKERS_CI_BRANCH`，**没有部署地址**。预览 URL 是部署时才分配的，构建期根本拿不到，所以预览只能用生产域名。副作用是预览页不会被当成独立页面收录——反而是想要的。
 
-实测三种场景：
+实测：
 
 | 环境变量 | 生效 baseURL |
 |---|---|
 | 无 | `https://huc.site/` |
 | `CF_PAGES=1 CF_PAGES_BRANCH=main` | `https://huc.site/` |
 | `CF_PAGES=1 CF_PAGES_BRANCH=feature-x CF_PAGES_URL=https://a1b2c3.…pages.dev` | `https://a1b2c3.…pages.dev/` |
+| `WORKERS_CI=1 WORKERS_CI_BRANCH=feat-x` | `https://huc.site/` |
 
 前提是模板里所有站内链接都走 `relURL` / `absURL`，没有手写 `/writing/`——否则覆盖了也一样错。
 
@@ -168,27 +170,27 @@ hugo --baseURL $CF_PAGES_URL
 
 ---
 
-## 6. Gitee 接不了 Pages 的 Git 集成
+## 6. Git 集成只认 GitHub / GitLab，Gitee 没有入口
 
-想当然会以为「填个仓库地址就行」。官方文档原文：
+想当然会以为「填个仓库地址就行」。官方文档原文（Pages）：
 
 > The Git integration enables automatic builds and deployments every time you push a change to your connected **GitHub** or **GitLab** repository.
 
-> Pages offers support for GitHub and GitLab.
+Workers Builds 的文档同样只列 `Artifacts`、`GitHub`、`GitLab`，也没有 Gitee。
 
-只有这两家，Gitee 没有入口。剩下的路只有三条：
+剩下的路只有三条：
 
 | 方案 | 保留自动构建 | 代价 |
 |---|---|---|
-| GitHub / GitLab 镜像，Pages 连镜像仓 | 是 | 需要一个额外账号；可用 `git remote set-url --add --push` 一次推两边 |
-| Direct Upload + 外部 CI | 是（构建在外部跑） | 项目**不能**改回 Git 集成，没有 PR 预览 |
-| 本地手动上传 | 否 | 每次发文手动跑 `wrangler pages deploy` |
+| GitHub / GitLab 镜像，连镜像仓 | 是 | 需要额外账号；两个远程分别推 |
+| Direct Upload + 外部 CI | 是（构建在外部跑） | Pages 上**不能**改回 Git 集成，没有 PR 预览 |
+| 本地手动上传 | 否 | 每次发文手动跑 `wrangler deploy` |
 
-镜像方案是唯一既保留原生集成、又不牺牲推送体验的。
+镜像方案是唯一既保留原生集成、又不牺牲推送体验的。实测用两个独立远程而不是给 `origin` 挂两个 push 地址——Gitee 会返回 `429 Pending queue overflowed` 和 `408 Authorization server timeout`，挂在一起时一边失败整条命令就报错，分不清 GitHub 到底推上去没有。
 
 ### Direct Upload 是单向的
 
-官方文档两处都写了：
+Pages 官方文档两处都写了：
 
 - Git 集成的项目：`You cannot switch to Direct Upload later`
 - Direct Upload 的项目：`If you choose Direct Upload, you cannot switch to Git integration later. You will have to create a new project`
@@ -199,9 +201,12 @@ hugo --baseURL $CF_PAGES_URL
 
 ## 7. Hugo 版本必须钉住
 
-v3 构建镜像里 Hugo 的默认版本是 **0.147.7**（官方 build image 文档），本项目用的是 0.169。不设 `HUGO_VERSION` 会以一个指向模板文件的报错失败，而报错信息完全不提版本。
+构建镜像里 Hugo 的默认版本都是 **0.147.7**（Pages v3 镜像与 Workers Builds 镜像一样），本项目用的是 0.169。不设 `HUGO_VERSION` 会以一个指向模板文件的报错失败，而报错信息完全不提版本——很容易误判成模板写错。
 
-而且 `HUGO_VERSION` 在 Production 和 Preview 是**两套独立变量**。只配 Production 会出现「主站正常、PR 预览挂掉」，更难排查。
+两个容易踩的差别：
+
+- **Pages**：变量在 Settings → Environment variables，且 Production 与 Preview 是**两套独立变量**，只配 Production 会出现「主站正常、PR 预览挂掉」
+- **Workers**：变量在 Settings → **Build → Build Variables and Secrets**。Settings → Environment variables 是**运行时**变量，构建期读不到
 
 ---
 

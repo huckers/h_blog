@@ -7,7 +7,7 @@
 | 项 | 值 |
 |---|---|
 | 站点 | <https://huc.site> |
-| 源码 | <https://gitee.com/hucker/h_blog>（主）<br><https://github.com/huckers/h_blog>（镜像，Pages 从此构建） |
+| 源码 | <https://gitee.com/hucker/h_blog>（主）<br><https://github.com/huckers/h_blog>（镜像，Workers 从此构建） |
 | 设计稿 | `prototype/`（当前版本，落地依据）、`site/`（上一版，留档） |
 
 ---
@@ -20,7 +20,7 @@
 | 样式 | 手写 CSS | 无框架，两层：设计系统 + Markdown 映射 |
 | 交互 | 原生 JS | 约 250 行，无框架、无依赖 |
 | 检索 | 构建期 JSON 索引 | 查询全在浏览器本地完成 |
-| 部署 | Cloudflare Pages | 纯静态 |
+| 部署 | Cloudflare Workers（静态资源） | 纯静态 |
 
 构建耗时 200ms 量级。全流程零运行时依赖，不需要 `npm install`。
 
@@ -139,6 +139,7 @@ scripts/
   shots.mjs             批量截首屏（需 playwright）
 
 hugo.toml               站点配置
+wrangler.toml           Workers 部署配置（静态资源目录、404 处理）
 prototype/  site/       设计稿
 ```
 
@@ -154,7 +155,7 @@ Hugo
    ├─ Taxonomies        →  /tags/ /series/
    └─ 资源管道           →  CSS minify + fingerprint
    ▼
-public/  →  Cloudflare Pages
+public/  →  Cloudflare Workers
 ```
 
 模板层次：`baseof.html` 定义骨架，各页面用 `{{ define "main" }}` 填充；导航、页脚、meta 全部走 `partials/`。
@@ -240,16 +241,21 @@ draft: false                   # 可选，true 则只在 dev 可见
 
 ## 部署
 
-Cloudflare Pages 的 Git 集成只支持 **GitHub 和 GitLab**，不支持 Gitee。因此代码在 Gitee 上开发，同时镜像到 GitHub，Pages 连 GitHub 构建。
+部署在 Cloudflare **Workers**（静态资源模式），从 GitHub 镜像仓库自动构建。
+
+两条前置约束：
+
+- Cloudflare 的 Git 集成只支持 **GitHub / GitLab**，不支持 Gitee，所以代码在 Gitee 上开发、镜像到 GitHub
+- Cloudflare 已把新项目引导到 Workers：官方 Pages 文档首屏写着 *Workers supports most Pages use cases and offers a broader feature set. Start new projects with Workers.*
 
 ### 仓库镜像
 
-代码在 Gitee 上开发，Pages 从 GitHub 镜像构建。两个独立远程：
+两个独立远程：
 
 | 远程 | 地址 | 用途 |
 |---|---|---|
 | `origin` | `https://gitee.com/hucker/h_blog.git` | 主仓库，`main` 的 upstream |
-| `github` | `https://github.com/huckers/h_blog.git` | 镜像，Pages 从这里构建 |
+| `github` | `https://github.com/huckers/h_blog.git` | 镜像，Workers 从这里构建 |
 
 一次推送两边：
 
@@ -260,36 +266,53 @@ git publish        # 等价于 git push origin main; git push github main
 用两个独立远程，而不是给 `origin` 挂两个 push 地址——Gitee 偶尔返回 429 / 408 限流，
 挂在一起时一边失败会让整条命令报错，分不清 GitHub 到底推上去没有。
 
-### Pages 配置
+### Workers 配置
+
+仓库根目录的 `wrangler.toml`：
+
+```toml
+name = "h-blog"
+compatibility_date = "2026-10-30"
+
+[assets]
+directory = "./public"
+not_found_handling = "404-page"
+```
+
+`name` 必须与 dashboard 里的 Worker 项目名**完全一致**，否则 Workers Builds 会构建失败。`not_found_handling = "404-page"` 让未命中的请求返回站点自己的 `404.html` 并保持 404 状态码；不设则是纯文本的 `404 Not Found`。
+
+没有 `main` 字段——纯静态资源，不需要 Worker 脚本。
+
+### dashboard 设置
 
 | 配置项 | 值 |
 |---|---|
-| Production branch | `main` |
+| Git branch | `main` |
 | Build command | `node scripts/build.mjs` |
-| Build output directory | `public` |
-| 环境变量 `HUGO_VERSION` | `0.169.0`（Production 与 Preview **两处都要设**） |
+| Deploy command | `npx wrangler deploy` |
+| Preview command | `npx wrangler preview` |
+| Build variable | `HUGO_VERSION` = `0.169.0` |
 
-`HUGO_VERSION` 必须显式设置。v3 构建镜像里 Hugo 的默认版本是 0.147.7，本项目用到 0.169 的能力，不设会直接构建失败。
+`HUGO_VERSION` 必须设。Workers Builds 镜像预装的是 **Hugo extended 0.147.7**，本项目用到 0.169 的能力，不设会以一个指向模板文件的报错失败，报错里不提版本。
 
-`HUGO_VERSION` 在 Preview 环境是独立的一套变量，只配 Production 会出现「主站正常、PR 预览挂掉」。
+变量位置是 **Settings → Build → Build Variables and Secrets**，不是 Settings → Environment variables——后者是运行时变量，构建期读不到。
 
 ### baseURL 的处理
 
-`scripts/build.mjs` 按分支决定，不需要在 dashboard 里写条件语句：
+`scripts/build.mjs` 负责决定，dashboard 里只写一行命令：
 
 | 场景 | baseURL |
 |---|---|
-| 本地 `npm run build` | `hugo.toml` 里的生产域名 |
-| Pages 生产分支（`main`） | `hugo.toml` 里的生产域名 |
-| Pages 预览 / 分支预览 | `$CF_PAGES_URL`（本次部署自己的地址） |
+| 本地构建 | `hugo.toml` 里的生产域名 |
+| Workers Builds（生产与预览） | `hugo.toml` 里的生产域名 |
 
-不能一律用 `$CF_PAGES_URL`：它是「当前这一次部署」的地址，生产部署时是 `<hash>.<project>.pages.dev`，不是自定义域名。一律覆盖会让正式站的 canonical、sitemap、RSS 全部指向哈希域名。
+Workers Builds 注入的默认变量只有 `CI`、`WORKERS_CI`、`WORKERS_CI_BUILD_UUID`、`WORKERS_CI_COMMIT_SHA`、`WORKERS_CI_BRANCH`，**没有「本次部署 URL」**——预览地址是部署时才分配的，构建期拿不到。所以预览构建也用生产域名的 canonical，副作用是预览页不会被当成独立页面收录，这正是想要的。
 
 前提是所有站内链接都走 `relURL` / `absURL`，没有手写 `/writing/`。
 
 ### 自定义域名
 
-Pages 项目 → Custom domains → 添加 `huc.site`，按提示配置 DNS 记录。域名变更时同步修改 `hugo.toml` 的 `baseURL`。
+Worker 项目 → Settings → Domains & Routes → 添加 `huc.site`。域名已托管在 Cloudflare，会自动创建 DNS 记录。域名变更时同步修改 `hugo.toml` 的 `baseURL`。
 
 ---
 
