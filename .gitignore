@@ -12,6 +12,16 @@ node_modules/
 s-full.png
 .tmp-preview/
 
+# wrangler 本地缓存（account_id、临时打包目录）。
+# 每台机器由 wrangler 自己生成，提交它只会把本机账号信息散播出去。
+# 真正的部署配置是仓库根目录的 wrangler.toml，那个必须进仓库。
+.wrangler/
+
+# wrangler 的本地环境变量文件，用来放不入库的密钥。本项目是纯静态站，
+# 目前不需要，但一旦有人加进来就必须是忽略状态，否则等于把密钥推到公开仓库。
+.dev.vars
+.dev.vars.*
+
 # 本地协作产物（截图、DOM dump、一次性脚本、备份）。
 # 注意：不删除目录本身，只是不进仓库。若要单独版本化工作笔记，
 # 可以把下一行换成 ".workbuddy/*" + "!.workbuddy/memory/"。
