@@ -1,7 +1,7 @@
 {
   "name": "h-blog",
   "type": "module",
-  "version": "2.4.1",
+  "version": "1.0.0",
   "private": true,
   "description": "H_BLOG — 个人技术博客，Hugo + 手写 Go Template",
   "scripts": {

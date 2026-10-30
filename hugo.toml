@@ -48,7 +48,7 @@ enableEmoji = false
   pagerSize = 20
 
 [params]
-  version    = "v2.4.1"
+  version    = "v1.0.0"
   author     = "Hucker"
   # 设计稿是「中文名 / 拉丁名」成对显示。现在两边同一个名字，重复没意义，
   # 留空即可——模板里用 {{ with }} 判断，空就不渲染「 / XXX」后缀。

@@ -317,7 +317,14 @@ Workers Builds 注入的默认变量只有 `CI`、`WORKERS_CI`、`WORKERS_CI_BUI
 
 ### 自定义域名
 
-Worker 项目 → Settings → Domains & Routes → 添加 `huc.site`。域名已托管在 Cloudflare，会自动创建 DNS 记录。域名变更时同步修改 `hugo.toml` 的 `baseURL`。
+| 地址 | 说明 |
+|---|---|
+| <https://huc.site> | 生产域名，绑定在 `h-blog` 这个 Worker 的自定义域上 |
+| <https://h-blog.zthack8.workers.dev> | Workers 默认地址，任何时候都能用；排查域名 / DNS / 代理问题时用它对照 |
+
+域名已托管在 Cloudflare，绑定后自动创建 DNS 记录，不需要手工配走 CNAME。域名变更时同步修改 `hugo.toml` 的 `baseURL`。
+
+一个自定义域只能挂在一个 Worker 上。若目标域名已被别的 Worker 占用，绑定会失败；先解绑原 Worker 再绑新的（脚本本身不会删，随时可以重绑到子域）。
 
 ---
 
