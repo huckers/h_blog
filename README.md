@@ -7,7 +7,7 @@
 | 项 | 值 |
 |---|---|
 | 站点 | <https://huc.site> |
-| 源码 | <https://gitee.com/hucker/h_blog> |
+| 源码 | <https://gitee.com/hucker/h_blog>（主）<br><https://github.com/huckers/h_blog>（镜像，Pages 从此构建） |
 | 设计稿 | `prototype/`（当前版本，落地依据）、`site/`（上一版，留档） |
 
 ---
@@ -244,12 +244,21 @@ Cloudflare Pages 的 Git 集成只支持 **GitHub 和 GitLab**，不支持 Gitee
 
 ### 仓库镜像
 
-`origin` 配置两个 push 地址，一次 `git push` 两边同步：
+代码在 Gitee 上开发，Pages 从 GitHub 镜像构建。两个独立远程：
+
+| 远程 | 地址 | 用途 |
+|---|---|---|
+| `origin` | `https://gitee.com/hucker/h_blog.git` | 主仓库，`main` 的 upstream |
+| `github` | `https://github.com/huckers/h_blog.git` | 镜像，Pages 从这里构建 |
+
+一次推送两边：
 
 ```bash
-git remote set-url --add --push origin https://gitee.com/hucker/h_blog.git
-git remote set-url --add --push origin https://github.com/hucker/h_blog.git
+git publish        # 等价于 git push origin main; git push github main
 ```
+
+用两个独立远程，而不是给 `origin` 挂两个 push 地址——Gitee 偶尔返回 429 / 408 限流，
+挂在一起时一边失败会让整条命令报错，分不清 GitHub 到底推上去没有。
 
 ### Pages 配置
 
