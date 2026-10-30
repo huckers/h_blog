@@ -1,0 +1,699 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+/* ============================================================
+   SCHEMATIC — 程序员技术博客
+   设计语言：工程图纸 / 技术数据表
+   暖米白纸面 + 1px 度量标注 + 编号化分节
+   ============================================================ */
+
+:root{
+  /* ---- 面 ---- */
+  --paper:#F2EFE7;
+  --paper-2:#E8E3D6;
+  --ink:#16181A;
+  --ink-2:#1C1F25;
+
+  /* ---- 字 ---- */
+  --body:#2E2A24;
+  --muted:#5A554C;
+  --faint:#8C8678;
+
+  /* ---- 线 ---- */
+  --hair:#CBC4B4;
+
+  /* ---- 信号 ---- */
+  --signal:#C4461F;
+  --link:#23596B;
+
+  /* ---- 栅格 ---- */
+  --page:1440px;
+  --pad:48px;
+  --inner:1344px;         /* 1440 - 48*2 */
+  --measure:680px;        /* 阅读列 */
+  --measure-indent:232px; /* 阅读列在内容区内的左缩进 */
+  --rail:376px;           /* 文章页右栏 */
+  --rail-gap:56px;
+
+  /* ---- 字体 ---- */
+  --sans:"Sarasa Gothic SC","Sarasa UI SC","Noto Sans SC","Source Han Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:"JetBrains Mono","Cascadia Mono",Consolas,"Courier New",monospace;
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+html{-webkit-text-size-adjust:100%;}
+
+body{
+  background:var(--paper);
+  color:var(--body);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.9;
+  letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  min-width:var(--page);
+  text-rendering:optimizeLegibility;
+}
+
+a{color:inherit;text-decoration:none;}
+img,svg{display:block;}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+
+/* ============================================================
+   布局
+   ============================================================ */
+.page{
+  width:var(--page);
+  margin:0 auto;
+  background:var(--paper);
+  position:relative;
+}
+.wrap{
+  width:100%;
+  padding-left:var(--pad);
+  padding-right:var(--pad);
+}
+.inner{width:var(--inner);margin:0 auto;}
+
+.stack{display:flex;flex-direction:column;}
+.row{display:flex;align-items:center;}
+
+/* ============================================================
+   原子排版
+   ============================================================ */
+.mono{font-family:var(--mono);font-variant-ligatures:none;}
+.serif{font-family:var(--serif);font-weight:400;}
+
+/* 元数据：9.5 / 10.5 / 11 三档 */
+.meta{
+  font-family:var(--mono);
+  font-size:10.5px;
+  line-height:1.4;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--faint);
+}
+.meta-xs{font-size:9.5px;letter-spacing:.14em;}
+.meta-11{font-size:11px;letter-spacing:.08em;}
+
+.kicker{
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--faint);
+}
+
+.sig{color:var(--signal);}
+.weak{color:var(--faint);}
+.sec{color:var(--muted);}
+.ink-c{color:var(--ink);}
+
+/* 数字/编号：等宽数字，避免跳动 */
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
+
+/* ============================================================
+   页头 —— 通栏条带（在 .page 之外，随窗口满幅）
+   ============================================================ */
+.site-header{
+  border-bottom:1px solid var(--ink);
+  background:var(--paper);
+}
+.site-header .bar{
+  max-width:var(--page);
+  margin:0 auto;
+  height:88px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 var(--pad);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brand .mark{
+  width:9px;height:9px;
+  background:var(--signal);
+  flex:0 0 9px;
+}
+.brand .name{
+  font-family:var(--mono);
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+.brand .sub{
+  font-size:11.5px;
+  color:var(--faint);
+  letter-spacing:.04em;
+  margin-left:6px;
+  padding-left:14px;
+  border-left:1px solid var(--hair);
+}
+
+.nav{display:flex;align-items:center;gap:30px;}
+.nav a{
+  font-size:12.5px;
+  letter-spacing:.1em;
+  color:var(--body);
+  padding-bottom:4px;
+  border-bottom:2px solid transparent;
+  transition:color .12s ease;
+}
+.nav a:hover{color:var(--ink);}
+.nav a.on{
+  color:var(--signal);
+  border-bottom-color:var(--signal);
+}
+.nav .sep{width:1px;height:12px;background:var(--hair);}
+.nav .util{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--faint);
+}
+
+/* ============================================================
+   页脚 —— 通栏暗面（图纸的图签栏）
+   整站除了代码块，只有这里用暗面：它标记「图纸到此为止」，
+   所以不再用细线收口，靠色块本身断句。
+   ============================================================ */
+.site-footer{
+  width:100%;
+  background:var(--ink);
+  margin-top:96px;
+}
+.site-footer .wrap{
+  max-width:var(--page);
+  margin:0 auto;
+}
+.site-footer .top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:80px;
+  padding:44px 0 48px;
+}
+.site-footer .fnote{
+  max-width:420px;
+  font-size:12px;
+  line-height:1.85;
+  color:#A29C92;
+}
+.site-footer .fnote strong{
+  display:block;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#D7D3C8;
+  font-weight:500;
+  margin-bottom:10px;
+}
+.site-footer .links{
+  display:flex;
+  gap:48px;
+}
+.site-footer .links dl{margin:0;min-width:124px;}
+.site-footer .links dt{
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#6E7480;
+  margin-bottom:10px;
+}
+.site-footer .links dd{
+  font-size:12.5px;
+  color:#A9A49A;
+  line-height:2;
+}
+.site-footer .links dd a{transition:color .12s ease;}
+.site-footer .links dd a:hover{color:var(--paper);}
+.site-footer .legal{
+  height:54px;
+  border-top:1px solid #2A2E36;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#6E7480;
+}
+
+/* ============================================================
+   度量条 Dimension Strip
+   ============================================================ */
+/* 注意：.dim 必须放在 .wrap 里且不再自带水平内边距，
+   否则会与 .wrap 的 48 叠加成 96，与台账错开一整格。 */
+.dim{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  height:34px;
+}
+.dim .line{
+  flex:1;
+  height:1px;
+  background:var(--hair);
+  position:relative;
+}
+.dim .line::before,
+.dim .line::after{
+  content:"";
+  position:absolute;
+  top:-4px;
+  width:1px;height:9px;
+  background:var(--hair);
+}
+.dim .line::before{left:0;}
+.dim .line::after{right:0;}
+.dim .txt{
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--faint);
+  white-space:nowrap;
+}
+
+/* 墨色封底线：录集收口语汇 */
+.rule-ink{height:1px;background:var(--ink);}
+.rule-ink.gap{margin-top:14px;}
+
+/* ============================================================
+   台账 Ledger（表）
+   ============================================================ */
+.ledger{border:1px solid var(--ink);}
+.ledger .thead{
+  height:34px;
+  background:var(--ink);
+  display:grid;
+  align-items:center;
+  padding:0 12px;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--paper-2);
+}
+.ledger .tr{
+  height:64px;
+  display:grid;
+  align-items:center;
+  padding:0 12px;
+  border-bottom:1px solid var(--hair);
+  transition:background .12s ease;
+}
+.ledger .tr:hover{background:var(--paper-2);}
+.ledger .tr:last-child{border-bottom:none;}
+.ledger .tr .t{
+  font-size:15px;
+  color:var(--ink);
+  letter-spacing:.01em;
+}
+.ledger .tr .t em{
+  font-style:normal;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.06em;
+  color:var(--faint);
+  margin-left:10px;
+}
+
+/* 无外框的独立台账 */
+.ledger-flat .thead{
+  height:34px;
+  display:grid;
+  align-items:center;
+  padding:0 12px;
+  border-bottom:1px solid var(--ink);
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--faint);
+}
+.ledger-flat .tr{
+  height:64px;
+  display:grid;
+  align-items:center;
+  padding:0 12px;
+  border-bottom:1px solid var(--hair);
+}
+.ledger-flat .tr:hover{background:var(--paper-2);}
+.ledger-flat .tr:last-child{border-bottom:none;}
+
+/* ============================================================
+   技术档案 Title Block（墨线面板）
+   ============================================================ */
+.titleblock{border:1px solid var(--ink);}
+.titleblock .tb-head{
+  height:32px;
+  background:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 12px;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--paper);
+}
+.titleblock .tb-head .dot{
+  width:5px;height:5px;
+  background:var(--signal);
+}
+.titleblock .tb-row{
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 12px;
+  border-bottom:1px solid var(--hair);
+  font-size:12px;
+}
+.titleblock .tb-row:last-child{border-bottom:none;}
+.titleblock .tb-row .k{
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--faint);
+}
+.titleblock .tb-row .v{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.04em;
+  color:var(--body);
+}
+.titleblock .tb-row .v.zh{
+  font-family:var(--sans);
+  font-size:12px;
+  letter-spacing:.02em;
+}
+
+/* ============================================================
+   侧栏面板两种笺
+   ============================================================ */
+.panel-soft{
+  background:var(--paper-2);
+  border:1px solid var(--ink);
+  padding:15px 12px;
+}
+.panel-line{
+  border:1px solid var(--ink);
+  padding:14px 12px;
+}
+.rail-block + .rail-block{margin-top:32px;}
+.rail-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--faint);
+  padding-bottom:10px;
+}
+
+/* OUTLINE 目录 */
+.outline{display:flex;flex-direction:column;gap:0;}
+.outline a{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  height:32px;
+  font-size:12.5px;
+  color:var(--muted);
+  border-bottom:1px solid transparent;
+}
+.outline a .n{
+  font-family:var(--mono);
+  font-size:9.5px;
+  color:var(--faint);
+  letter-spacing:.1em;
+  flex:0 0 18px;
+}
+.outline a:hover{color:var(--ink);}
+.outline a.on{color:var(--ink);}
+.outline a.on .n{color:var(--signal);}
+
+/* RELATED 列表 */
+.related{display:flex;flex-direction:column;}
+.related a{
+  display:block;
+  padding:12px 0;
+  border-bottom:1px solid var(--hair);
+}
+.related a:last-child{border-bottom:none;}
+.related .rt{
+  font-size:13px;
+  color:var(--body);
+  line-height:1.55;
+}
+.related a:hover .rt{color:var(--ink);}
+.related .rm{
+  margin-top:6px;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--faint);
+}
+
+/* ============================================================
+   按钮 / 标签 / 翻页
+   ============================================================ */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:46px;
+  padding:0 26px;
+  border:1px solid var(--ink);
+  font-size:13px;
+  letter-spacing:.06em;
+  color:var(--ink);
+  background:transparent;
+  white-space:nowrap;
+  transition:background .12s ease,color .12s ease;
+}
+.btn.primary{background:var(--ink);color:var(--paper);}
+.btn.primary:hover{background:var(--ink-2);}
+.btn:hover{background:var(--paper-2);}
+.btn.primary:hover{background:var(--ink-2);}
+
+.btn-sm{
+  display:inline-flex;
+  align-items:center;
+  height:34px;
+  padding:0 14px;
+  border:1px solid var(--ink);
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  height:28px;
+  padding:0 11px;
+  border:1px solid var(--hair);
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.chip.on{
+  border-color:var(--ink);
+  background:var(--ink);
+  color:var(--paper);
+}
+.chip .c{color:var(--faint);margin-left:7px;}
+.chip.on .c{color:var(--paper-2);}
+
+.pager{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:56px;
+  border-top:1px solid var(--ink);
+}
+.pager .pnums{display:flex;gap:0;}
+.pager .pnums a{
+  width:40px;height:56px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--faint);
+  border-left:1px solid var(--hair);
+}
+.pager .pnums a.on{color:var(--ink);background:var(--paper-2);}
+.pager .pnums a:last-child{border-right:1px solid var(--hair);}
+
+/* ============================================================
+   正文排版 prose
+   ============================================================ */
+.prose{font-size:15px;line-height:1.95;color:var(--body);}
+.prose > p{margin-bottom:22px;}
+.prose > p.lead{
+  font-size:16px;
+  line-height:1.85;
+  color:var(--ink);
+}
+.prose h2{
+  font-size:21px;
+  font-weight:500;
+  line-height:1.5;
+  letter-spacing:.01em;
+  color:var(--ink);
+  margin:52px 0 18px;
+  padding-top:18px;
+  border-top:1px solid var(--hair);
+}
+.prose h2 .hn{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.16em;
+  color:var(--signal);
+  margin-right:12px;
+  vertical-align:2px;
+}
+.prose h3{
+  font-size:16.5px;
+  font-weight:500;
+  line-height:1.6;
+  color:var(--ink);
+  margin:34px 0 12px;
+}
+.prose ul,.prose ol{margin:0 0 22px;padding-left:20px;}
+.prose li{margin-bottom:8px;}
+.prose li::marker{color:var(--faint);font-family:var(--mono);font-size:12px;}
+.prose strong{font-weight:500;color:var(--ink);}
+.prose a{
+  color:var(--link);
+  border-bottom:1px solid rgba(35,89,107,.35);
+}
+.prose a:hover{border-bottom-color:var(--link);}
+.prose code{
+  font-family:var(--mono);
+  font-size:12.5px;
+  background:var(--paper-2);
+  padding:2px 5px;
+  color:var(--ink);
+}
+.prose blockquote{
+  margin:28px 0;
+  padding:4px 0 4px 20px;
+  border-left:2px solid var(--signal);
+  color:var(--muted);
+  font-size:14.5px;
+  line-height:1.85;
+}
+
+/* 暗面代码块：整站唯一的暗面，像打穿纸面的窗口 */
+.code{
+  background:var(--ink);
+  margin:28px 0;
+  overflow:hidden;
+}
+.code .code-head{
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 14px;
+  border-bottom:1px solid #2A2E36;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#7A7F88;
+}
+.code .code-head .lang{color:#9AA0AA;}
+.code pre{
+  padding:16px 14px 18px;
+  overflow-x:auto;
+  font-family:var(--mono);
+  font-size:12.5px;
+  line-height:1.75;
+  color:#D7D3C8;
+  tab-size:2;
+}
+.code pre .c1{color:#6E7480;}      /* 注释 */
+.code pre .c2{color:#C98A5E;}      /* 关键字 */
+.code pre .c3{color:#8FA88B;}      /* 字符串 */
+.code pre .c4{color:#A9C0CE;}      /* 函数/属性 */
+
+/* 图注表 FIG. */
+.figtable{
+  border:1px solid var(--ink);
+  margin:32px 0;
+}
+.figtable .fhead{
+  height:32px;
+  background:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 12px;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--paper);
+}
+.figtable .frow{
+  height:40px;
+  display:grid;
+  align-items:center;
+  padding:0 12px;
+  border-bottom:1px solid var(--hair);
+  font-size:12.5px;
+}
+.figtable .frow:last-child{border-bottom:none;}
+.figtable .frow .fm{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--muted);
+}
+.figcap{
+  margin:-24px 0 32px;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--faint);
+}
+
+/* ============================================================
+   工具类
+   ============================================================ */
+.mt-8{margin-top:8px;}
+.mt-16{margin-top:16px;}
+.mt-24{margin-top:24px;}
+.mt-32{margin-top:32px;}
+.mt-40{margin-top:40px;}
+.mt-48{margin-top:48px;}
+.mt-64{margin-top:64px;}
+.mt-72{margin-top:72px;}
+.mb-16{margin-bottom:16px;}
+/* 对齐工具：不要用 .tr / .tc 命名——会和台账行 .tr、标签计数 .tc 撞名 */
+.ta-c{text-align:center;}
+.ta-r{text-align:right;}

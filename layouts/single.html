@@ -1,0 +1,113 @@
+{{ define "main" }}
+{{ $page := . }}
+{{ $posts := (where site.RegularPages "Section" "writing").ByDate.Reverse }}
+{{ $total := len $posts }}
+
+{{/* 先触发内容渲染，否则 .Fragments 拿不到标题树 */}}
+{{ $_ := .Content }}
+
+{{/* h2 小节：给右侧 OUTLINE 用。
+   .Fragments 在别的页面上下文里取不到，直接从 RawContent 解析；
+   id 用 anchorize 生成，与 goldmark 的 autoHeadingID 保持一致。 */}}
+{{ $h2s := slice }}
+{{ range findRE `(?m)^##\s+\S.*$` .RawContent }}
+  {{ $t := replaceRE `^##\s+` "" . }}
+  {{ $h2s = $h2s | append (dict "Title" $t "ID" ($t | anchorize)) }}
+{{ end }}
+
+<div class="bc-row">
+  <span class="bc-path"><span class="dir">~/writing/</span><span class="file">{{ .File.ContentBaseName }}.md</span></span>
+  <span class="bc-issue pre">ISSUE {{ printf "%02d" $total }}   —   {{ .Date.Format "2006.01" }}</span>
+</div>
+<div class="rule-full"></div>
+
+<div class="article-wrap">
+  <article class="reading">
+    <div class="eyebrow"><span class="marker"></span><span class="txt pre">{{ delimit .Params.tags "  /  " | upper }}</span></div>
+
+    <h1 class="art-title">{{ .Title }}</h1>
+
+    <div class="meta-spec">
+      <div class="cell"><span class="k">发布</span><span class="v">{{ .Date.Format "2006.01.02" }}</span></div>
+      <div class="cell"><span class="k">阅读</span><span class="v">{{ partial "readtime.html" . }} MIN</span></div>
+      <div class="cell"><span class="k">字数</span><span class="v">{{ partial "wordcount.html" . }}</span></div>
+      {{ with .Params.series }}
+      <div class="cell"><span class="k">系列</span><span class="v link">{{ . | upper }}</span></div>
+      {{ end }}
+      {{ with .Params.updated }}
+      <div class="cell"><span class="k">修订</span><span class="v">{{ .Format "2006.01.02" }}</span></div>
+      {{ end }}
+    </div>
+
+    <div class="md">{{ .Content }}</div>
+
+    {{ $prev := .PrevInSection }}
+    {{ $next := .NextInSection }}
+    {{ if or $prev $next }}
+    <div class="pager2">
+      {{ with $prev }}
+      <a class="cell" href="{{ .RelPermalink }}">
+        <span class="k pre">←  上一篇</span>
+        <span class="t">{{ .Title | truncate 24 }}</span>
+      </a>
+      {{ else }}
+      <span class="cell"><span class="k pre">←  上一篇</span><span class="t" style="color:var(--faint);">已是第一篇</span></span>
+      {{ end }}
+      <span class="div"></span>
+      {{ with $next }}
+      <a class="cell next" href="{{ .RelPermalink }}">
+        <span class="k pre">下一篇  →</span>
+        <span class="t">{{ .Title | truncate 24 }}</span>
+      </a>
+      {{ else }}
+      <span class="cell next"><span class="k pre">下一篇  →</span><span class="t" style="color:var(--faint);">已是最新</span></span>
+      {{ end }}
+    </div>
+    {{ end }}
+  </article>
+
+  <aside class="tocrail">
+    {{ if $h2s }}
+    <div class="outline">
+      <div class="toc-head"><span class="l">OUTLINE</span><span class="c">{{ printf "%02d" (len $h2s) }}</span></div>
+      {{ range $i, $h := $h2s }}
+      <a class="toc-item{{ if eq $i 0 }} on{{ end }}" href="#{{ $h.ID }}" data-target="{{ $h.ID }}">
+        <span class="n">{{ printf "%02d" (add $i 1) }}</span><span class="t">{{ $h.Title | truncate 14 }}</span>
+      </a>
+      {{ end }}
+      <div class="toc-close"></div>
+    </div>
+    {{ end }}
+
+    {{/* 相关：同标签，最多 3 篇 */}}
+    {{ $tags := .Params.tags }}
+    {{ $related := slice }}
+    {{ range $posts }}
+      {{ if ne .RelPermalink $page.RelPermalink }}
+        {{ $hit := false }}
+        {{ range .Params.tags }}{{ if in $tags . }}{{ $hit = true }}{{ end }}{{ end }}
+        {{ if $hit }}{{ $related = $related | append . }}{{ end }}
+      {{ end }}
+    {{ end }}
+    {{ with first 3 $related }}
+    <div class="related">
+      <div class="related-head"><span class="l pre">RELATED / 相关</span></div>
+      {{ range . }}
+      <a class="rel-item" href="{{ .RelPermalink }}">
+        <span class="t">{{ .Title | truncate 22 }}</span>
+        <span class="m pre">{{ index .Params.tags 0 | upper }}  ·  {{ partial "readtime.html" . }} MIN</span>
+      </a>
+      {{ end }}
+      <div class="toc-close"></div>
+    </div>
+    {{ end }}
+
+    <div class="share">
+      <span class="h">SHARE</span>
+      <a href="#" data-copy="{{ .Permalink }}">复制链接  /  COPY</a>
+      <a href="javascript:window.print()">转成 PDF</a>
+      <a href="{{ site.Params.repo }}">在 {{ site.Params.repoName }} 上纠错</a>
+    </div>
+  </aside>
+</div>
+{{ end }}

@@ -1,0 +1,23 @@
+# 构建产物
+public/
+resources/
+.hugo_build.lock
+
+# 依赖（本项目没有运行时依赖，保留以防以后加工具）
+node_modules/
+
+# 工具临时目录
+.playwright-cli/
+.shots/
+s-full.png
+.tmp-preview/
+
+# 本地协作产物（截图、DOM dump、一次性脚本、备份）。
+# 注意：不删除目录本身，只是不进仓库。若要单独版本化工作笔记，
+# 可以把下一行换成 ".workbuddy/*" + "!.workbuddy/memory/"。
+.workbuddy/
+
+# 系统
+.DS_Store
+Thumbs.db
+*.log

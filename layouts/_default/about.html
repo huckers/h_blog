@@ -1,0 +1,48 @@
+{{ define "main" }}
+{{ $posts := where site.RegularPages "Section" "writing" }}
+<section class="page-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">ABOUT  /  关于</span></div>
+  <div class="titlerow">
+    <h1 class="h1">{{ .Title }}</h1>
+    <p class="aside">写这个站的人、用的工具，以及为什么不用现成的博客模板。</p>
+  </div>
+</section>
+
+<div class="about-wrap">
+  <div class="about-main">
+    <div class="md">{{ .Content }}</div>
+
+    <div class="spec-table">
+      <div class="spec-row2"><span class="k">AUTHOR</span><span class="v">{{ site.Params.author }}{{ with site.Params.authorEn }} / {{ . }}{{ end }}</span></div>
+      <div class="spec-row2"><span class="k">FIELD</span><span class="v">{{ site.Params.field }}</span></div>
+      <div class="spec-row2"><span class="k">SINCE</span><span class="v mono">{{ site.Params.since }}</span></div>
+      <div class="spec-row2"><span class="k">ENTRIES</span><span class="v mono">{{ len $posts }}</span></div>
+      <div class="spec-row2"><span class="k">LICENSE</span><span class="v mono">{{ site.Params.license }}</span></div>
+    </div>
+  </div>
+
+  <aside class="about-rail">
+    <div>
+      <div class="rp-head"><span class="l">SITE SPEC</span><span class="r">{{ site.Params.version }}</span></div>
+      <div class="site-row"><span class="k">ENGINE</span><span class="v">Hugo {{ hugo.Version }}</span></div>
+      <div class="site-row"><span class="k">TEMPLATE</span><span class="v">Go Template</span></div>
+      <div class="site-row"><span class="k">CONTENT</span><span class="v">Markdown</span></div>
+      <div class="site-row"><span class="k">SEARCH</span><span class="v">构建期索引 / 本地检索</span></div>
+      <div class="site-row"><span class="k">TRACKING</span><span class="v">none</span></div>
+      <div class="site-row"><span class="k">HOST</span><span class="v">Cloudflare Pages</span></div>
+    </div>
+
+    <div>
+      <div class="rp-head"><span class="l">CONTACT</span><span class="r">02</span></div>
+      <div class="contact-row"><span class="k">EMAIL</span><span class="v">{{ site.Params.email }}</span></div>
+      <div class="contact-row"><span class="k">SOURCE</span><a class="v" href="{{ site.Params.repo }}">{{ site.Params.repoName }}</a></div>
+      <div class="contact-row quiet"><span class="k">RSS</span><a class="v" href="{{ "index.xml" | relURL }}">index.xml</a></div>
+    </div>
+
+    <div class="sub-note">
+      <span class="h">COLOPHON</span>
+      <p>正文用 Markdown 写，模板是手写的 Go Template，没有引入任何前端框架。字体回落到系统默认，代码高亮在构建时完成。</p>
+    </div>
+  </aside>
+</div>
+{{ end }}

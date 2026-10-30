@@ -1,0 +1,17 @@
+{
+  "name": "h-blog",
+  "type": "module",
+  "version": "2.4.1",
+  "private": true,
+  "description": "H_BLOG — 个人技术博客，Hugo + 手写 Go Template",
+  "scripts": {
+    "dev": "node scripts/hugo.mjs server -D --disableFastRender",
+    "build": "node scripts/check.mjs && node scripts/hugo.mjs build --cleanDestinationDir",
+    "check": "node scripts/check.mjs",
+    "audit": "node scripts/audit-classes.mjs",
+    "align": "node scripts/measure-align.mjs",
+    "overflow": "node scripts/find-overflow.mjs",
+    "new": "node scripts/hugo.mjs new content/writing",
+    "preview": "node scripts/hugo.mjs server -D"
+  }
+}

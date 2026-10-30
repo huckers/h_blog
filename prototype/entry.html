@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>H_BLOG — 原型导出目录</title>
+<link rel="stylesheet" href="assets/proto.css">
+<style>
+/* 入口目录专用（不参与画布对齐） */
+.en-head{max-width:1440px;margin:0 auto;padding:56px 48px 34px;display:flex;flex-direction:column;gap:18px;}
+.en-label{display:flex;align-items:center;gap:12px;}
+.en-label .dot{flex:none;width:6px;height:6px;background:var(--signal);}
+.en-label .t{font-family:var(--mono);font-weight:500;font-size:11px;line-height:13px;letter-spacing:1.2px;color:var(--ink);}
+.en-h1{font-size:64px;line-height:80px;letter-spacing:-1px;font-weight:200;color:var(--ink);}
+.en-sub{width:720px;font-size:15px;line-height:28px;color:#2E2A24;}
+
+.en-cols{display:grid;grid-template-columns:46px 1fr 150px 96px 96px 68px;gap:16px;align-items:center;padding:0 14px;}
+.en-cols.head{height:34px;border-bottom:1px solid var(--ink);}
+.en-cols.head span{font-family:var(--mono);font-size:11px;letter-spacing:1.2px;color:var(--faint);}
+.en-cols > *:nth-child(n+4){text-align:right;}
+.en-wrap{max-width:1440px;margin:0 auto;padding:26px 48px 40px;}
+.en-row{height:62px;border-bottom:1px solid var(--hair);}
+.en-row .no{font-family:var(--mono);font-size:11px;color:var(--faint);}
+.en-row .nm{font-size:16px;color:var(--ink);}
+.en-row .nm i{display:block;margin-top:5px;font-family:var(--mono);font-style:normal;font-size:11px;letter-spacing:.6px;color:var(--faint);}
+.en-row .fl{font-family:var(--mono);font-size:11px;color:var(--link);}
+.en-row .h1,.en-row .h2,.en-row .d{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.en-row .d{color:var(--faint);}
+.en-row:hover .nm{color:var(--signal);}
+.en-note{border-top:1px solid var(--ink);padding:16px 14px 0;}
+.en-note p{font-family:var(--mono);font-size:11px;line-height:18px;color:var(--faint);}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <span class="wordmark">H_BLOG</span>
+      <span class="sep"></span>
+      <span class="ver">v2.4.1</span>
+    </a>
+    <nav class="nav">
+      <a href="writing.html">文章<i></i></a>
+      <a href="archive.html">归档<i></i></a>
+      <a href="series.html">系列<i></i></a>
+      <a href="about.html">关于<i></i></a>
+    </nav>
+    <div class="head-act">
+      <a class="searchbox" href="search.html">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <circle cx="4.6" cy="4.6" r="3" stroke="#5A554C" stroke-width="1.2"/>
+          <path d="M7 7L10 10" stroke="#5A554C" stroke-width="1.2"/>
+        </svg>
+        <span class="ph">检索</span>
+        <span class="kbd">CMD K</span>
+      </a>
+      <a class="btn-rss" href="confirm.html"><span>订阅 RSS</span></a>
+    </div>
+  </div>
+</header>
+
+<section class="en-head">
+  <div class="en-label"><i class="dot"></i><span class="t pre">EXPORT  /  原型导出</span></div>
+  <h1 class="en-h1">十个页面，按画布重写的。</h1>
+  <p class="en-sub">每一页的栏宽、字号阶梯、行高、间距都取自画布节点数据，行高与描边以画布实际渲染为准。唯一的主动偏离是字号下限：画布在 8–10px 区间放了一层等宽微标注，现统一抬到 11px。最后一列是「画布高度 − HTML 高度」的实测差。</p>
+</section>
+
+<div class="en-wrap">
+  <div class="en-cols head">
+    <span>NO.</span><span>页面</span><span>文件</span><span>画布高</span><span>HTML 高</span><span>偏差</span>
+  </div>
+
+  <a class="en-cols en-row" href="index.html">
+    <span class="no">01</span>
+    <span class="nm">首页<i>HOME  /  HERO + 本期主稿 + 台账</i></span>
+    <span class="fl">index.html</span><span class="h1">2124</span><span class="h2">2149</span><span class="d">+25</span>
+  </a>
+  <a class="en-cols en-row" href="writing.html">
+    <span class="no">02</span>
+    <span class="nm">文章列表<i>WRITING  /  12 条双栏目录 + 分页</i></span>
+    <span class="fl">writing.html</span><span class="h1">1705</span><span class="h2">1717</span><span class="d">+12</span>
+  </a>
+  <a class="en-cols en-row" href="article.html">
+    <span class="no">03</span>
+    <span class="nm">文章详情<i>ARTICLE  /  正文 616 + 目录栏 300</i></span>
+    <span class="fl">article.html</span><span class="h1">2630</span><span class="h2">2647</span><span class="d">+17</span>
+  </a>
+  <a class="en-cols en-row" href="archive.html">
+    <span class="no">04</span>
+    <span class="nm">归档<i>ARCHIVE  /  按年分组 + 四列台账</i></span>
+    <span class="fl">archive.html</span><span class="h1">1322</span><span class="h2">1326</span><span class="d">+4</span>
+  </a>
+  <a class="en-cols en-row" href="tags.html">
+    <span class="no">05</span>
+    <span class="nm">标签<i>TAG  /  分布条 + 21 个标签 3 列</i></span>
+    <span class="fl">tags.html</span><span class="h1">1265</span><span class="h2">1275</span><span class="d">+10</span>
+  </a>
+  <a class="en-cols en-row" href="series.html">
+    <span class="no">06</span>
+    <span class="nm">系列<i>SERIES  /  分期标尺 + 目录 + 右栏</i></span>
+    <span class="fl">series.html</span><span class="h1">1552</span><span class="h2">1563</span><span class="d">+11</span>
+  </a>
+  <a class="en-cols en-row" href="about.html">
+    <span class="no">07</span>
+    <span class="nm">关于<i>ABOUT  /  Spec 表 + Stack + 履历</i></span>
+    <span class="fl">about.html</span><span class="h1">1705</span><span class="h2">1713</span><span class="d">+8</span>
+  </a>
+  <a class="en-cols en-row" href="search.html">
+    <span class="no">08</span>
+    <span class="nm">检索<i>SEARCH  /  查询行 + 筛选条 + 结果</i></span>
+    <span class="fl">search.html</span><span class="h1">1352</span><span class="h2">1365</span><span class="d">+13</span>
+  </a>
+  <a class="en-cols en-row" href="confirm.html">
+    <span class="no">09</span>
+    <span class="nm">订阅确认<i>CONFIRM  /  回执 720 + 三步进度</i></span>
+    <span class="fl">confirm.html</span><span class="h1">1276</span><span class="h2">1291</span><span class="d">+15</span>
+  </a>
+  <a class="en-cols en-row" href="404.html">
+    <span class="no">10</span>
+    <span class="nm">404<i>NOT FOUND  /  大号数字 + 请求记录</i></span>
+    <span class="fl">404.html</span><span class="h1">1099</span><span class="h2">1110</span><span class="d">+11</span>
+  </a>
+
+  <div class="en-note">
+    <p>偏差全部为正、落在 4–25px，就是 11px 下限的代价：画布用 8–10px 装的微标注，行框只有 11–12px 高，抬到 11px 后每个文字块都要多占 2–3px，累计到页尾就是十几二十像素。分节边界、栏宽、栏数、字号阶梯仍然对得上；窄行（回执 34 / 标签格 50 / 台账 80 / 页脚 62）已逐个复核，没有挤压或裁切。</p>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="top">
+    <div class="fleft">
+      <p class="fstatement">写代码，<br>也写对代码的怀疑。</p>
+      <p class="fmeta pre">BLOG ENGINE v2.4   ·   STATIC   ·   NO TRACKING</p>
+    </div>
+    <div class="flinks">
+      <div class="col nav-col">
+        <span class="head">导航</span>
+        <a class="link" href="writing.html">文章索引</a>
+        <a class="link" href="archive.html">归档</a>
+        <a class="link" href="series.html">系列</a>
+        <a class="link" href="about.html">关于</a>
+      </div>
+      <div class="col feed-col">
+        <span class="head">订阅</span>
+        <a class="link" href="confirm.html">RSS</a>
+        <a class="link" href="confirm.html">邮件通讯</a>
+        <a class="link" href="#">源码</a>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+  <div class="bottom">
+    <span class="copy">2026 Hucker   ·   全部内容以 CC BY-NC 4.0 发布</span>
+    <span class="colophon pre">DESIGNED IN A TEXT EDITOR   ·   NO FRAMEWORK   ·   1440 GRID</span>
+    <a class="totop" href="#">TOP
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M5 9V1.2" stroke="#B8B2A4" stroke-width="1.2"/>
+        <path d="M1.4 4.8L5 1.2L8.6 4.8" stroke="#B8B2A4" stroke-width="1.2"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>

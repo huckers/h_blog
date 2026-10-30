@@ -1,0 +1,46 @@
+{{- /*
+  表格渲染钩子：Markdown 表格包一层 .tablewrap，让窄屏可以横向滚动而不是撑破页面。
+  CSS 里的 .md .tablewrap{overflow-x:auto} 早就写好了，但一直没人生成这个包裹层，
+  所以移动端宽表格会把整页顶宽。上下文见官方文档：
+  https://gohugo.io/render-hooks/tables/  (.THead / .TBody 是行数组，每行是单元格数组)
+  注：本项目未开 goldmark.parser.attribute.block，.Attributes 恒为空，留着不影响。
+*/ -}}
+<div class="tablewrap">
+  <table
+    {{- range $k, $v := .Attributes }}
+      {{- if $v }}
+        {{- printf " %s=%q" $k $v | safeHTMLAttr }}
+      {{- end }}
+    {{- end }}>
+    <thead>
+      {{- range .THead }}
+        <tr>
+          {{- range . }}
+            <th
+              {{- with .Alignment }}
+                {{- printf " style=%q" (printf "text-align: %s" .) | safeHTMLAttr }}
+              {{- end -}}
+            >
+              {{- .Text -}}
+            </th>
+          {{- end }}
+        </tr>
+      {{- end }}
+    </thead>
+    <tbody>
+      {{- range .TBody }}
+        <tr>
+          {{- range . }}
+            <td
+              {{- with .Alignment }}
+                {{- printf " style=%q" (printf "text-align: %s" .) | safeHTMLAttr }}
+              {{- end -}}
+            >
+              {{- .Text -}}
+            </td>
+          {{- end }}
+        </tr>
+      {{- end }}
+    </tbody>
+  </table>
+</div>

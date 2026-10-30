@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>检索 — SCHEMATIC</title>
+<link rel="stylesheet" href="assets/schematic.css">
+<style>
+  .pagehead{padding-top:72px;padding-bottom:26px;}
+  .pagehead h1{font-size:40px;line-height:1.2;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin-top:16px;}
+
+  .searchbox{display:flex;align-items:center;gap:24px;border-bottom:2px solid var(--ink);height:82px;}
+  .searchbox .q{
+    flex:1;
+    font-family:var(--sans);
+    font-size:26px;
+    line-height:1.3;
+    letter-spacing:.01em;
+    color:var(--ink);
+    background:transparent;border:none;outline:none;
+    padding:0;
+  }
+  .searchbox .q::placeholder{color:var(--hair);}
+  .searchbox .hintkey{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
+    border:1px solid var(--hair);padding:5px 8px;
+  }
+
+  .resultbar{display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:1px solid var(--hair);margin-top:26px;}
+  .resultbar .cnt{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+  .resultbar .cnt b{color:var(--ink);font-size:13px;font-weight:500;margin-right:6px;}
+  .resultbar .kw{color:var(--signal);}
+  .resultbar .chips{display:flex;gap:8px;}
+
+  .res{display:block;padding:28px 0;border-bottom:1px solid var(--hair);}
+  .res:hover{background:var(--paper-2);}
+  .res .rmeta{display:flex;align-items:center;gap:16px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+  .res .rmeta .tp{color:var(--muted);}
+  .res .rtic{font-size:19px;line-height:1.5;font-weight:500;color:var(--ink);margin-top:11px;letter-spacing:.005em;}
+  .res .rab{font-size:13px;line-height:1.8;color:var(--muted);margin-top:9px;max-width:900px;}
+  .res mark{background:rgba(196,70,31,.10);color:var(--signal);padding:0 2px;border-bottom:1px solid rgba(196,70,31,.4);}
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="mark"></span><span class="name">Schematic</span><span class="sub">程序员技术博客</span></a>
+      <nav class="nav">
+        <a href="articles.html">文章</a>
+        <a href="series.html">系列</a>
+        <a href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <section class="wrap">
+    <div class="pagehead">
+      <div class="kicker">Search / Local Index</div>
+      <h1>检索</h1>
+    </div>
+
+    <div class="searchbox">
+      <input class="q" type="text" value="schema" placeholder="输入关键词，回车检索…">
+      <span class="hintkey">Enter</span>
+      <button class="btn primary" style="height:52px;">检索</button>
+    </div>
+
+    <div class="resultbar">
+      <div class="cnt"><b class="num">7</b>条结果 · 关键词 <span class="kw">schema</span> · 12 ms</div>
+      <div class="chips">
+        <a class="chip on" href="#">全部</a>
+        <a class="chip" href="#">标题</a>
+        <a class="chip" href="#">正文</a>
+        <a class="chip" href="#">标签</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:0;">
+
+    <a class="res" href="article.html">
+      <div class="rmeta"><span class="tp">Backend</span><span>2026-10-27</span><span>14 min</span><span>3 处命中</span></div>
+      <div class="rtic">把 CMS 做成多站点：一次 <mark>schema</mark> 设计的取舍</div>
+      <div class="rab">单库多站点、多库单实例、多库多实例，三种切法我都试过。最后落在单库 + 站点维度表上……真正决定后期成本的，不是表怎么建，而是这条边界画在哪儿。</div>
+    </a>
+
+    <a class="res" href="article.html">
+      <div class="rmeta"><span class="tp">Database</span><span>2026-10-09</span><span>13 min</span><span>2 处命中</span></div>
+      <div class="rtic">MySQL 索引下推，别只看文档的例子</div>
+      <div class="rab">表结构里只要有函数包装或隐式类型转换，下推就会静默失效，而 explain 依旧一副很健康的样子。</div>
+    </a>
+
+    <a class="res" href="article.html">
+      <div class="rmeta"><span class="tp">Backend</span><span>2026-08-21</span><span>20 min</span><span>2 处命中</span></div>
+      <div class="rtic">幂等不是加个唯一索引就完了</div>
+      <div class="rab">唯一索引只解决并发插入这一种场景，而重试与消息重复投递会以报错的形式把另外两种暴露给你。</div>
+    </a>
+
+    <a class="res" href="article.html">
+      <div class="rmeta"><span class="tp">Design</span><span>2026-08-28</span><span>19 min</span><span>1 处命中</span></div>
+      <div class="rtic">设计系统不是组件库：一套令牌撑四个项目</div>
+      <div class="rab">组件会过时，令牌不会。把颜色、间距、字号抽成三层之后，四个端的视觉一致性第一次变得可校验。</div>
+    </a>
+
+    <a class="res" href="article.html">
+      <div class="rmeta"><span class="tp">Backend</span><span>2025-03-16</span><span>12 min</span><span>1 处命中</span></div>
+      <div class="rtic">对象存储的目录结构，决定了后期的迁移成本</div>
+      <div class="rab">按业务分目录还是按日期分目录，两年之后才知道哪个是对的——取决于你要不要按站点隔离。</div>
+    </a>
+
+    <a class="res" href="article.html">
+      <div class="rmeta"><span class="tp">Tooling</span><span>2026-09-18</span><span>15 min</span><span>1 处命中</span></div>
+      <div class="rtic">静态站点的检索，从 lunr 到自研</div>
+      <div class="rab">中文分词是绕不过去的坎。最后我用 200 行代码换掉了 40KB 的索引库，代价是自己维护一张同义词表。</div>
+    </a>
+
+    <a class="res" href="article.html" style="border-bottom:none;">
+      <div class="rmeta"><span class="tp">Practice</span><span>2026-09-03</span><span>17 min</span><span>1 处命中</span></div>
+      <div class="rtic">关于日志：什么时候该打，什么时候是噪音</div>
+      <div class="rab">日志的价值不取决于数量，而取决于「能不能只靠它复原一次请求的完整因果」。</div>
+    </a>
+
+    <div class="rule-ink" style="margin-top:16px;"></div>
+    <div class="row" style="justify-content:space-between;height:64px;">
+      <span class="mono" style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);">End of results · 索引覆盖 104 篇全文</span>
+      <a class="btn-sm" href="tags.html">按标签浏览 →</a>
+    </div>
+
+  </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal"><span>© 2026 Schematic</span><span>Built with a hand-rolled SSG</span></div>
+    </div>
+  </footer>
+</body>
+</html>

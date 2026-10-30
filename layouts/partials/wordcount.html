@@ -1,0 +1,7 @@
+{{- $text := .Content | plainify -}}
+{{- $n := strings.RuneCount $text -}}
+{{- if ge $n 1000 -}}
+{{- printf "%.1fk" (div (float $n) 1000) -}}
+{{- else -}}
+{{- $n -}}
+{{- end -}}

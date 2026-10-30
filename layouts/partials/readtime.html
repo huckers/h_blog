@@ -1,0 +1,3 @@
+{{- $text := .Content | plainify -}}
+{{- $n := strings.RuneCount $text -}}
+{{- div (add $n 399) 400 -}}

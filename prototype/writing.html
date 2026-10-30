@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>H_BLOG — 文章 / 全部文章</title>
+<link rel="stylesheet" href="assets/proto.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <span class="wordmark">H_BLOG</span>
+      <span class="sep"></span>
+      <span class="ver">v2.4.1</span>
+    </a>
+    <nav class="nav">
+      <a class="on" href="writing.html">文章<i></i></a>
+      <a href="archive.html">归档<i></i></a>
+      <a href="series.html">系列<i></i></a>
+      <a href="about.html">关于<i></i></a>
+    </nav>
+    <div class="head-act">
+      <a class="searchbox" href="search.html">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <circle cx="4.6" cy="4.6" r="3" stroke="#5A554C" stroke-width="1.2"/>
+          <path d="M7 7L10 10" stroke="#5A554C" stroke-width="1.2"/>
+        </svg>
+        <span class="ph">检索</span>
+        <span class="kbd">CMD K</span>
+      </a>
+      <a class="btn-rss" href="confirm.html"><span>订阅 RSS</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== 列表页头 ==================== -->
+<section class="page-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">WRITING  /  全部文章</span></div>
+  <div class="titlerow">
+    <h1 class="h1">文章</h1>
+    <p class="aside">按发布时间倒序。<br>要看结构，去归档；要找那一篇，用检索。</p>
+  </div>
+  <div class="metarow">
+    <span class="l pre">104 篇   ·   21 个主题   ·   2019.03 — 2026.10   ·   平均每月 1.3 篇</span>
+    <a class="r" href="confirm.html">RSS</a>
+  </div>
+</section>
+
+<!-- 排序工具条 -->
+<div class="toolbar">
+  <span class="pill on">最新</span>
+  <a class="pill off" href="#">最旧</a>
+  <a class="pill off" href="#">最多阅读</a>
+  <span class="note pre">每页 12 篇   ·   第 01 / 09 页   ·   按发布时间倒序</span>
+</div>
+<div class="rule-full"></div>
+
+<!-- ==================== 12 条 双栏 ==================== -->
+<div class="catalog">
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">01   ·   分布式系统</span><span class="r pre">2026.10.24   ·   18 MIN</span></span>
+    <h2 class="t">缓存击穿前的 200 毫秒</h2>
+    <p class="a">一次 200ms 的缓存空窗，把下游打穿了三次。这篇写我们怎么把空窗压到 12ms，以及为此多出来的那层复杂度值不值。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">02   ·   分布式系统</span><span class="r pre">2026.09.28   ·   22 MIN</span></span>
+    <h2 class="t">关单为什么不能相信缓存</h2>
+    <p class="a">本地缓存与微信侧状态之间一定有时间差。承认这个差、并把它写进判断条件，比试图消除它有用得多。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">03   ·   数据库内核</span><span class="r pre">2026.08.11   ·   26 MIN</span></span>
+    <h2 class="t">一个事务里最多能写几次</h2>
+    <p class="a">WAL 写入、undo 保留、锁等待——把这三个数字叠起来，你会得到一条不该跨过的线。附实测数据。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">04   ·   数据库内核</span><span class="r pre">2026.07.19   ·   21 MIN</span></span>
+    <h2 class="t">pg 的 autovacuum 为什么会突然不干活</h2>
+    <p class="a">不是配置错了，是长事务把清理水位钉住了。附一段能直接跑、能立刻看出问题在哪的排查 SQL。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">05   ·   分布式系统   ·   系列 02</span><span class="r pre">2026.06.30   ·   24 MIN</span></span>
+    <h2 class="t">把时间当成状态的代价</h2>
+    <p class="a">订单状态一旦带上时间戳，缓存与事务就开始互相污染。系列第 02 篇，也是被问得最多的一篇。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">06   ·   工程</span><span class="r pre">2026.05.22   ·   14 MIN</span></span>
+    <h2 class="t">用 git log 读一个项目的十年</h2>
+    <p class="a">提交信息的语法，比架构文档更诚实。三个筛选命令，看出一段代码的来路，以及谁在什么时候放弃了它。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">07   ·   工程</span><span class="r pre">2026.04.16   ·   17 MIN</span></span>
+    <h2 class="t">断点续传的三个半错误</h2>
+    <p class="a">分片、校验、幂等，还有半个是关于「用户直接关掉浏览器」。最后一个没人写进文档，但线上最多。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">08   ·   数据库内核</span><span class="r pre">2026.03.05   ·   19 MIN</span></span>
+    <h2 class="t">我为什么不用 ORM 写报表</h2>
+    <p class="a">不是 ORM 慢，是它不让你把执行计划摊开看。报表的瓶颈永远在计划，不在映射。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">09   ·   数据库内核</span><span class="r pre">2026.02.18   ·   23 MIN</span></span>
+    <h2 class="t">一个 B+ 树的删除路径有多长</h2>
+    <p class="a">从根到叶，再回溯合并。把四层树的每一步画在同一张图上，比读十页教材快。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">10   ·   可观测</span><span class="r pre">2026.01.27   ·   16 MIN</span></span>
+    <h2 class="t">观测性的三件套，第三件最贵</h2>
+    <p class="a">日志、指标、链路。前两件是成本，第三件是账单——采样率每提高一档，费用翻一倍不止。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">11   ·   工程</span><span class="r pre">2025.12.09   ·   12 MIN</span></span>
+    <h2 class="t">用静态博客撑住 12,480 个读者</h2>
+    <p class="a">没有数据库，没有后台，只有一堆 md 和一个 CI。以及一次被打之后学到的三件事。</p>
+  </a>
+  <a class="entry" href="article.html">
+    <span class="meta"><span class="l pre">12   ·   工程</span><span class="r pre">2025.11.21   ·   15 MIN</span></span>
+    <h2 class="t">事故复盘里最没用的一句话</h2>
+    <p class="a">「下次注意」。它既不是动作，也不是约束，只是一句让会议可以结束的话。</p>
+  </a>
+</div>
+
+<!-- 分页 -->
+<div class="pager">
+  <span class="note pre">共 104 篇   ·   每页 12 篇   ·   想按年翻，去归档</span>
+  <div class="nums">
+    <span class="arrow">←</span>
+    <span class="pnum on">01</span>
+    <a class="pnum off" href="#">02</a>
+    <a class="pnum off" href="#">03</a>
+    <span class="gap">…</span>
+    <a class="pnum off" href="#">09</a>
+    <a class="arrow next" href="#">→</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="top">
+    <div class="fleft">
+      <p class="fstatement">写代码，<br>也写对代码的怀疑。</p>
+      <p class="fmeta pre">BLOG ENGINE v2.4   ·   STATIC   ·   NO TRACKING</p>
+    </div>
+    <div class="flinks">
+      <div class="col nav-col">
+        <span class="head">导航</span>
+        <a class="link" href="writing.html">文章索引</a>
+        <a class="link" href="archive.html">归档</a>
+        <a class="link" href="series.html">系列</a>
+        <a class="link" href="about.html">关于</a>
+      </div>
+      <div class="col feed-col">
+        <span class="head">订阅</span>
+        <a class="link" href="confirm.html">RSS</a>
+        <a class="link" href="confirm.html">邮件通讯</a>
+        <a class="link" href="#">源码</a>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+  <div class="bottom">
+    <span class="copy">2026 Hucker   ·   全部内容以 CC BY-NC 4.0 发布</span>
+    <span class="colophon pre">DESIGNED IN A TEXT EDITOR   ·   NO FRAMEWORK   ·   1440 GRID</span>
+    <a class="totop" href="#">TOP
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M5 9V1.2" stroke="#B8B2A4" stroke-width="1.2"/>
+        <path d="M1.4 4.8L5 1.2L8.6 4.8" stroke="#B8B2A4" stroke-width="1.2"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>

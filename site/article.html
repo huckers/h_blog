@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>把 CMS 做成多站点：一次 schema 设计的取舍 — SCHEMATIC</title>
+<link rel="stylesheet" href="assets/schematic.css">
+<style>
+  .wrap-article{
+    padding-left:var(--pad);
+    padding-right:var(--pad);
+    display:grid;
+    grid-template-columns:1fr 376px;
+    column-gap:56px;
+    align-items:start;
+    padding-top:64px;
+  }
+  /* 正文区 = 1344 - 376 - 56 = 912，左边缘与全站对齐在 48。
+     阅读列仍锁 680（15px 下约 45 字/行），多出的 232 交给展示块，
+     所以代码块 / 图注表 / 章节横线会横向铺满 912 —— 这是「图纸里的展陈框」，
+     不是失控的宽度。 */
+  .crumb, .art-title, .art-meta{max-width:680px;}
+  .art-body > p,
+  .art-body > ul,
+  .art-body > ol,
+  .art-body > blockquote,
+  .art-body > .fn{max-width:680px;}
+  .prose h3{max-width:680px;}
+  /* 章节横线走满 912（阅读列 680 + 232），用伪元素而不是 border，
+     这样标题文字仍在 680 内、横线却收在正文区右缘 */
+  .prose h2{position:relative;max-width:680px;border-top:none;}
+  .prose h2::before{
+    content:"";
+    position:absolute;left:0;top:0;
+    width:calc(100% + 232px);height:1px;
+    background:var(--hair);
+  }
+  /* 侧栏吸顶：正文 2400px 长，不吸顶会让右栏下面空出 2000px。
+     侧栏高度 618 < 栏区高度，sticky 可正常工作。 */
+  .wrap-article > aside{
+    position:sticky;
+    top:32px;
+    align-self:start;
+  }
+  .crumb{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+  .crumb .sep{color:var(--hair);}
+  .crumb .cur{color:var(--signal);}
+  .art-title{font-size:34px;line-height:1.42;font-weight:500;letter-spacing:-.005em;color:var(--ink);margin-top:22px;}
+  .art-meta{display:flex;align-items:center;gap:0;margin-top:26px;border-top:1px solid var(--ink);border-bottom:1px solid var(--hair);height:48px;}
+  .art-meta div{padding:0 20px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);border-right:1px solid var(--hair);}
+  .art-meta div:first-child{padding-left:0;}
+  .art-meta div:last-child{border-right:none;}
+  .art-meta b{color:var(--body);font-weight:400;font-size:11px;letter-spacing:.06em;margin-left:8px;}
+  .art-body{margin-top:40px;}
+  .fn{margin-top:56px;padding-top:18px;border-top:1px solid var(--hair);font-family:var(--mono);font-size:9.5px;line-height:1.9;letter-spacing:.06em;color:var(--faint);text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="mark"></span><span class="name">Schematic</span><span class="sub">程序员技术博客</span></a>
+      <nav class="nav">
+        <a class="on" href="articles.html">文章</a>
+        <a href="series.html">系列</a>
+        <a href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <div class="wrap-article">
+
+    <!-- ==================== 正文列 ==================== -->
+    <article>
+      <div class="crumb">
+        <a href="articles.html">Index</a>
+        <span class="sep">/</span>
+        <a href="tags.html">Backend</a>
+        <span class="sep">/</span>
+        <span class="cur">001</span>
+      </div>
+
+      <h1 class="art-title">把 CMS 做成多站点：<br>一次 schema 设计的取舍</h1>
+
+      <div class="art-meta">
+        <div>Date<b>2026-10-27</b></div>
+        <div>Read<b>14 min</b></div>
+        <div>Words<b>3,240</b></div>
+        <div>Topic<b>Backend</b></div>
+      </div>
+
+      <div class="art-body prose">
+
+        <p class="lead">
+          四端共用一套内容模型之后，我发现真正决定后期成本的，不是表怎么建，
+          而是「哪些字段允许各站点自己改」这条边界画在哪儿。
+        </p>
+
+        <h2><span class="hn">01</span>先说结论</h2>
+
+        <p>
+          单库多站点、多库单实例、多库多实例，三种切法我都试过。最后落在
+          <strong>单库 + 站点维度表</strong>上，理由是它把「跨站点检索」这件迟早要做的事，
+          变成了一次普通的 <code>JOIN</code>，而不是一次数据迁移。
+        </p>
+
+        <p>
+          代价也明确：所有表都要带 <code>site_id</code>，所有查询都要自己记得加条件。
+          这不是免费的，只是它比「先分库、以后再想办法聚合」便宜。
+        </p>
+
+        <blockquote>
+          多站点的核心矛盾从来不是隔离，而是共享。<br>
+          隔离有现成方案，共享没有。
+        </blockquote>
+
+        <h2><span class="hn">02</span>三种切法</h2>
+
+        <p>
+          先看对比。这张表是当时贴在白板上、被反复擦掉的版本，最后留下来的是第三列。
+        </p>
+
+        <div class="figtable">
+          <div class="fhead"><span>Fig.01 多站点三种方案</span><span>2026-10</span></div>
+          <div class="frow" style="grid-template-columns:1fr 140px 120px;background:var(--paper-2);">
+            <span class="mono" style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);">方案</span>
+            <span class="mono" style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);">隔离度</span>
+            <span class="mono" style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);">迁移成本</span>
+          </div>
+          <div class="frow" style="grid-template-columns:1fr 140px 120px;">
+            <span>单库多站点（+ site_id）</span>
+            <span class="fm">中</span>
+            <span class="fm">低</span>
+          </div>
+          <div class="frow" style="grid-template-columns:1fr 140px 120px;">
+            <span>多库单实例</span>
+            <span class="fm">较高</span>
+            <span class="fm">中</span>
+          </div>
+          <div class="frow" style="grid-template-columns:1fr 140px 120px;">
+            <span>多库多实例</span>
+            <span class="fm">高</span>
+            <span class="fm">高</span>
+          </div>
+        </div>
+        <div class="figcap">Fig.01 — 三种切法的隔离度与迁移成本对照</div>
+
+        <p>
+          第二列「隔离度」看起来最重要，实际上最先被排除。因为四个站点共享的是同一批作者、
+          同一套标签体系，隔离做得越彻底，这部分冗余就越多。
+        </p>
+
+        <h3>站点表只放三件事</h3>
+
+        <p>
+          我一开始想做一个「站点配置中心」，能覆盖主题色、导航、SEO、甚至模板。
+          做到第三周就发现，配置项一旦超过二十个，它本身就成了一个需要文档的子系统。
+          于是砍到只剩三件事：
+        </p>
+
+        <ul>
+          <li><strong>身份</strong>：域名、站点名、默认语言</li>
+          <li><strong>继承</strong>：哪些字段允许覆盖，用一张 <code>site_field_override</code> 描述</li>
+          <li><strong>开关</strong>：功能级灰度，只允许布尔值，不允许值配置</li>
+        </ul>
+
+        <div class="code">
+          <div class="code-head"><span class="lang">sql</span><span>schema/site.sql</span></div>
+<pre><span class="c1">-- 站点只描述「能改什么」，不描述「改成什么」</span>
+<span class="c2">CREATE TABLE</span> site (
+  id            <span class="c4">BIGINT</span> <span class="c2">PRIMARY KEY</span>,
+  host          <span class="c4">VARCHAR</span>(128) <span class="c2">NOT NULL UNIQUE</span>,
+  name          <span class="c4">VARCHAR</span>(64)  <span class="c2">NOT NULL</span>,
+  locale        <span class="c4">CHAR</span>(5)      <span class="c2">NOT NULL DEFAULT</span> <span class="c3">'zh-CN'</span>
+);
+
+<span class="c1">-- 覆盖关系单独一张表，避免 site 表长成 40 列</span>
+<span class="c2">CREATE TABLE</span> site_field_override (
+  site_id       <span class="c4">BIGINT</span> <span class="c2">NOT NULL</span>,
+  entity        <span class="c4">VARCHAR</span>(32) <span class="c2">NOT NULL</span>,  <span class="c1">-- post / page / nav</span>
+  field         <span class="c4">VARCHAR</span>(32) <span class="c2">NOT NULL</span>,
+  <span class="c2">PRIMARY KEY</span> (site_id, entity, field)
+);</pre>
+        </div>
+
+        <h2><span class="hn">03</span>真正贵的不是表结构</h2>
+
+        <p>
+          改表结构花了两天。让它跑对花了三周。问题全部出在「忘记加 <code>site_id</code>」上，
+          而且这类 bug 有个恶劣的性质：它不会报错，只会安静地多返回几条别的站点的数据。
+        </p>
+
+        <p>
+          我最后用了一个很土的办法：在 DAO 层做一个只有 <code>site_id</code> 一个参数的
+          <code>ScopedQuery</code> 包装，所有跨站点查询必须显式走 <code>unscoped()</code>。
+          于是「漏加」从静默通过变成了一个需要写出来的动作。
+        </p>
+
+        <p>
+          这类改法的价值不在于防错，而在于<strong>把错误变成可见的决策</strong>。
+          代码评审时看到 <code>unscoped()</code>，人自然会问一句「这里为什么可以跨站点」。
+        </p>
+
+        <h2><span class="hn">04</span>落地顺序</h2>
+
+        <p>
+          如果重来一次，我会按这个顺序做，而不是先设计表：
+        </p>
+
+        <ol>
+          <li>先把「跨站点检索」的查询写出来，它能暴露出所有模型上的错误假设</li>
+          <li>再定覆盖边界，只允许字段级覆盖，不允许结构级</li>
+          <li>最后才建表、写迁移</li>
+        </ol>
+
+        <p>
+          先有查询，后有结构，这个顺序在数据建模上几乎总是对的。因为查询是你真正要跑的东西，
+          而结构只是为了让查询跑得动。
+        </p>
+
+        <div class="fn">
+          Notes — 本文基于一个多站点 CMS 的真实重构过程，表结构与代码已做简化。<br>
+          相关：<a href="article.html" style="color:var(--link);">幂等不是加个唯一索引就完了</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ==================== 右栏 ==================== -->
+    <aside>
+
+      <div class="rail-block">
+        <div class="rail-title"><span>Outline</span><span class="num">04</span></div>
+        <nav class="outline">
+          <a class="on" href="#"><span class="n">01</span><span>先说结论</span></a>
+          <a href="#"><span class="n">02</span><span>三种切法</span></a>
+          <a href="#"><span class="n">03</span><span>真正贵的不是表结构</span></a>
+          <a href="#"><span class="n">04</span><span>落地顺序</span></a>
+        </nav>
+        <div class="rule-ink mt-16"></div>
+      </div>
+
+      <div class="rail-block">
+        <div class="rail-title"><span>Related</span><span class="num">03</span></div>
+        <div class="related">
+          <a href="article.html">
+            <div class="rt">幂等不是加个唯一索引就完了</div>
+            <div class="rm">Practice · 20 min</div>
+          </a>
+          <a href="article.html">
+            <div class="rt">MySQL 索引下推，别只看文档的例子</div>
+            <div class="rm">Database · 13 min</div>
+          </a>
+          <a href="article.html">
+            <div class="rt">设计系统不是组件库：一套令牌撑四个项目</div>
+            <div class="rm">Design · 19 min</div>
+          </a>
+        </div>
+        <div class="rule-ink gap"></div>
+      </div>
+
+      <div class="rail-block">
+        <div class="rail-title"><span>Share</span></div>
+        <div class="panel-line" style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);">SCHEMATIC.DEV/P/001</span>
+          <span class="mono" style="font-size:9.5px;letter-spacing:.12em;color:var(--signal);">COPY</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal"><span>© 2026 Schematic</span><span>Built with a hand-rolled SSG</span></div>
+    </div>
+  </footer>
+</body>
+</html>

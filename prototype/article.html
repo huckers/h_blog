@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>在 200 毫秒内关掉一个订单 — H_BLOG</title>
+<link rel="stylesheet" href="assets/proto.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <span class="wordmark">H_BLOG</span>
+      <span class="sep"></span>
+      <span class="ver">v2.4.1</span>
+    </a>
+    <nav class="nav">
+      <a class="on" href="writing.html">文章<i></i></a>
+      <a href="archive.html">归档<i></i></a>
+      <a href="series.html">系列<i></i></a>
+      <a href="about.html">关于<i></i></a>
+    </nav>
+    <div class="head-act">
+      <a class="searchbox" href="search.html">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <circle cx="4.6" cy="4.6" r="3" stroke="#5A554C" stroke-width="1.2"/>
+          <path d="M7 7L10 10" stroke="#5A554C" stroke-width="1.2"/>
+        </svg>
+        <span class="ph">检索</span>
+        <span class="kbd">CMD K</span>
+      </a>
+      <a class="btn-rss" href="confirm.html"><span>订阅 RSS</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- 面包屑 -->
+<div class="bc-row">
+  <span class="bc-path"><span class="dir">~/writing/distributed/payments/</span><span class="file">notify-race.md</span></span>
+  <span class="bc-issue pre">ISSUE 04   —   2026.10</span>
+</div>
+<div class="rule-full"></div>
+
+<!-- 正文 + 目录栏 -->
+<div class="article-wrap">
+  <article class="reading">
+    <div class="eyebrow"><span class="marker"></span><span class="txt pre">DISTRIBUTED SYSTEMS  /  PAYMENTS  /  事故复盘</span></div>
+
+    <h1 class="art-title">在 200 毫秒内关掉一个订单：<br>微信支付里的竞态与自证</h1>
+
+    <div class="meta-spec">
+      <div class="cell"><span class="k">发布</span><span class="v">2026.10.24</span></div>
+      <div class="cell"><span class="k">阅读</span><span class="v">48 MIN</span></div>
+      <div class="cell"><span class="k">字数</span><span class="v">12,940</span></div>
+      <div class="cell"><span class="k">系列</span><span class="v link">PAYMENTS #04</span></div>
+    </div>
+
+    <p class="lead">凌晨两点十七分，一条「订单已支付」的回调到达服务器。而十分钟前，对账系统刚刚把这笔单标记为「已关闭」。钱到了，单关着，用户在我们的客服后台里被催缴了三次。第二天早上，我们在监控里看到的是一个漂亮的成功、平稳的 P99，和一封来自财务的邮件。</p>
+
+    <div class="h2row"><span class="num">§ 01</span><h2>事故现场</h2></div>
+    <p class="prose">把日志按时间排开之后，问题变得非常干净：我们有两个独立的写入者，都认为自己拥有这笔订单的最终解释权。对账任务负责关闭「超时未支付」的单，回调处理器负责把「已支付」写进账。它们之间没有任何形式的互斥，只共享一行数据库记录，和一条「先查后写」的约定。</p>
+
+    <div class="figure">
+      <div class="fig-head"><span class="l pre">FIG. 01   回调与关单的时间竞争</span><span class="r pre">out_trade_no  4200 8173 9921</span></div>
+      <div class="tl-row"><span class="t">T+0000ms</span><span class="e">回调到达，验签通过，原文写入 notify_log</span></div>
+      <div class="tl-row"><span class="t">T+0120ms</span><span class="e">本地订单仍是 CLOSED，对账任务在 02:07 已关单</span></div>
+      <div class="tl-row"><span class="t">T+0240ms</span><span class="e">幂等键冲突，返回 204 退出，settle 从未执行</span></div>
+      <div class="tl-row"><span class="t">T+0900ms</span><span class="e">财务发现「已关闭但已收款」，人工介入</span></div>
+    </div>
+
+    <div class="h2row"><span class="num">§ 02</span><h2>把时间当成状态的代价</h2></div>
+    <p class="prose">我们一直在用「时间」表达状态：超过 15 分钟未支付即为关闭。但这个表达式缺少主语——由谁、在哪个时刻、基于哪一份快照做出的判断？一旦判断和执行之间存在间隙，它就不再是状态，而只是一句愿望。</p>
+
+    <div class="codeblock">
+      <div class="cb-head"><span class="f">src/pay/order-state.ts</span><span class="l">TYPESCRIPT</span></div>
+      <div class="cb-body">
+        <div class="c">// 错误：状态由时间推导，两个写入者各算一次</div>
+        <div class="n">const closed = Date.now() - order.createdAt > 15 * MIN</div>
+        <div class="c">// 正确：状态只能由事件单向推进</div>
+        <div class="n">const NEXT = { OPEN: ['CLOSED','PAID'],<br>               CLOSED: ['PAID'], PAID: [] }</div>
+        <div class="a">// 关键：CLOSED → PAID 是合法跃迁，但必须先落库再回 204</div>
+      </div>
+    </div>
+
+    <p class="prose">这次改动只有 11 行。但它把「谁来决定关闭」从一个分布式的隐式共识，变成了一个可以在数据库里被校验的事实。竞态没有消失，它只是被挤到了一个可以被观测的地方。</p>
+
+    <div class="h2row"><span class="num">§ 03</span><h2>三条修正</h2></div>
+
+    <div class="listitem">
+      <span class="n">01</span>
+      <div class="c">
+        <h3>写入处闭环</h3>
+        <p>唯一约束不是性能优化，而是一份契约。out_trade_no 与状态跃迁必须在同一个事务里被校验，冲突的那一方必须失败，而且必须知道自己是失败的一方。</p>
+      </div>
+    </div>
+    <div class="listitem">
+      <span class="n">02</span>
+      <div class="c">
+        <h3>幂等键前置</h3>
+        <p>先 claim，再 settle。claim 的返回值决定这条消息是否拥有执行权——它比任何「检查是否已处理」都更便宜，也更诚实。</p>
+      </div>
+    </div>
+    <div class="listitem">
+      <span class="n">03</span>
+      <div class="c">
+        <h3>让关单可以被拒绝</h3>
+        <p>关单之前必须重读一次支付状态，并在同一事务里写入 order_closed 事件。如果读到了 PAID，关单就是一次失败——而我们过去把它当成了一次成功。</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="bar"></span>
+      <div class="body">
+        <span class="k pre">NOTE  —  2026.10.24 补记</span>
+        <p>任何依赖「先查后写」的一致性，都必须在写入处闭环，否则它只是一个更慢的竞态。</p>
+      </div>
+    </div>
+
+    <p class="prose">一个月之后我们又把订单窗口调回了 15 分钟，什么都没有坏。差别在于，现在如果有人问「这笔单为什么是关着的」，我们能指着一行数据回答，而不是指着一个时间差。</p>
+
+    <div class="pager2">
+      <a class="cell" href="article.html">
+        <span class="k pre">←  上一篇</span>
+        <span class="t">日志不是给机器读的</span>
+      </a>
+      <span class="div"></span>
+      <a class="cell next" href="article.html">
+        <span class="k pre">下一篇  →</span>
+        <span class="t">用一个 12 行的调度器解释 100ms 超时</span>
+      </a>
+    </div>
+  </article>
+
+  <!-- 目录栏 -->
+  <aside class="tocrail">
+    <div class="outline">
+      <div class="toc-head"><span class="l">OUTLINE</span><span class="c">04</span></div>
+      <a class="toc-item" href="#"><span class="n">01</span><span class="t">事故现场</span></a>
+      <a class="toc-item on" href="#"><span class="n">02</span><span class="t">把时间当成状态的代价</span></a>
+      <a class="toc-item" href="#"><span class="n">03</span><span class="t">三条修正</span></a>
+      <a class="toc-item" href="#"><span class="n">04</span><span class="t">复盘清单</span></a>
+      <div class="toc-close"></div>
+    </div>
+
+    <div class="related">
+      <div class="related-head"><span class="l pre">RELATED / 相关</span></div>
+      <a class="rel-item" href="article.html">
+        <span class="t">幂等键的三种实现及其代价</span>
+        <span class="m pre">SYSTEMS  ·  22 MIN</span>
+      </a>
+      <a class="rel-item" href="article.html">
+        <span class="t">关单为什么不能相信缓存</span>
+        <span class="m pre">DATABASE  ·  09 MIN</span>
+      </a>
+      <a class="rel-item" href="article.html">
+        <span class="t">一个事务里最多能写几次</span>
+        <span class="m pre">DATABASE  ·  14 MIN</span>
+      </a>
+      <div class="toc-close"></div>
+    </div>
+
+    <div class="share">
+      <span class="h">SHARE</span>
+      <a href="#">复制链接  /  COPY</a>
+      <a href="#">转成 PDF</a>
+      <a href="#">在 GitHub 上纠错</a>
+    </div>
+  </aside>
+</div>
+
+<footer class="footer">
+  <div class="top">
+    <div class="fleft">
+      <p class="fstatement">写代码，<br>也写对代码的怀疑。</p>
+      <p class="fmeta pre">BLOG ENGINE v2.4   ·   STATIC   ·   NO TRACKING</p>
+    </div>
+    <div class="flinks">
+      <div class="col nav-col">
+        <span class="head">导航</span>
+        <a class="link" href="writing.html">文章索引</a>
+        <a class="link" href="archive.html">归档</a>
+        <a class="link" href="series.html">系列</a>
+        <a class="link" href="about.html">关于</a>
+      </div>
+      <div class="col feed-col">
+        <span class="head">订阅</span>
+        <a class="link" href="confirm.html">RSS</a>
+        <a class="link" href="confirm.html">邮件通讯</a>
+        <a class="link" href="#">源码</a>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+  <div class="bottom">
+    <span class="copy">2026 Hucker   ·   全部内容以 CC BY-NC 4.0 发布</span>
+    <span class="colophon pre">DESIGNED IN A TEXT EDITOR   ·   NO FRAMEWORK   ·   1440 GRID</span>
+    <a class="totop" href="#">TOP
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M5 9V1.2" stroke="#B8B2A4" stroke-width="1.2"/>
+        <path d="M1.4 4.8L5 1.2L8.6 4.8" stroke="#B8B2A4" stroke-width="1.2"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>

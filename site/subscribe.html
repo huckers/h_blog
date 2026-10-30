@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>确认订阅 — SCHEMATIC</title>
+<link rel="stylesheet" href="assets/schematic.css">
+<style>
+  .sub-wrap{padding-left:360px;padding-right:360px;}
+  .sub-head{padding-top:56px;padding-bottom:30px;}
+  .sub-head h1{font-size:34px;line-height:1.42;font-weight:500;letter-spacing:-.005em;color:var(--ink);margin-top:18px;}
+  .sub-head p{margin-top:16px;font-size:14px;line-height:1.9;color:var(--muted);}
+
+  .receipt{border:1px solid var(--ink);}
+  .receipt .row{display:flex;align-items:center;height:34px;padding:0 12px;border-bottom:1px solid var(--hair);}
+  .receipt .row:last-child{border-bottom:none;}
+  .receipt .k{width:92px;flex:0 0 92px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+  .receipt .v{font-size:12.5px;color:var(--body);}
+  .receipt .v.mono{font-family:var(--mono);font-size:12px;letter-spacing:.02em;}
+  .receipt .v.sig{color:var(--signal);}
+
+  .steps{margin-top:34px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .step .bar{height:3px;background:var(--hair);}
+  .step.done .bar{background:var(--ink);}
+  .step.now .bar{background:var(--signal);}
+  .step .lab{display:flex;gap:8px;align-items:baseline;margin-top:9px;
+    font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
+  .step.done .lab,.step.now .lab{color:var(--muted);}
+  .step.now .lab .st{color:var(--signal);}
+
+  .actions{padding-top:46px;}
+  .btns{display:flex;gap:12px;margin-top:14px;}
+  .hint{margin-top:16px;font-size:12.5px;line-height:1.7;color:var(--muted);}
+
+  .closing{height:1px;background:var(--ink);margin-top:52px;}
+  .subfoot{height:54px;display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+  .subfoot .pick{color:var(--muted);}
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="mark"></span><span class="name">Schematic</span><span class="sub">程序员技术博客</span></a>
+      <nav class="nav">
+        <a href="articles.html">文章</a>
+        <a href="series.html">系列</a>
+        <a href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <div class="sub-wrap">
+
+    <div class="sub-head">
+      <div class="kicker">Subscribe / Step 02</div>
+      <h1>还差一步：去邮箱点确认。</h1>
+      <p>确认信已经发出。点开里面的链接，订阅才会真正生效——在这之前，你不会收到任何推送。</p>
+    </div>
+
+    <!-- 订阅回执 -->
+    <div class="receipt">
+      <div class="row"><span class="k">Email</span><span class="v mono">reader@example.com</span></div>
+      <div class="row"><span class="k">Status</span><span class="v mono sig">PENDING</span></div>
+      <div class="row"><span class="k">Sent</span><span class="v mono">2026-10-29 13:15</span></div>
+      <div class="row"><span class="k">Expires</span><span class="v mono">2026-10-30 13:15</span></div>
+    </div>
+
+    <!-- 三步进度 -->
+    <div class="steps">
+      <div class="step done">
+        <div class="bar"></div>
+        <div class="lab"><span class="num">01</span><span>已提交邮箱</span></div>
+      </div>
+      <div class="step now">
+        <div class="bar"></div>
+        <div class="lab"><span class="num">02</span><span class="st">待你确认</span></div>
+      </div>
+      <div class="step">
+        <div class="bar"></div>
+        <div class="lab"><span class="num">03</span><span>订阅生效</span></div>
+      </div>
+    </div>
+
+    <!-- 动作区 -->
+    <div class="actions">
+      <div class="kicker">接下来 / Next</div>
+      <div class="btns">
+        <button class="btn primary">重发确认信</button>
+        <a class="btn" href="index.html">改邮箱地址</a>
+      </div>
+      <p class="hint">十分钟内没收到，先翻一下垃圾邮件文件夹。</p>
+    </div>
+
+    <!-- 收尾 -->
+    <div class="closing"></div>
+    <div class="subfoot">
+      <span class="pick">订阅状态 PENDING · 确认后跳回文章列表</span>
+      <span>Schematic / 2026</span>
+    </div>
+
+  </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal"><span>© 2026 Schematic</span><span>Built with a hand-rolled SSG</span></div>
+    </div>
+  </footer>
+</body>
+</html>

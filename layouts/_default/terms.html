@@ -1,0 +1,97 @@
+{{ define "main" }}
+{{ if eq .Data.Plural "series" }}
+{{/* ---------- 系列总览 ---------- */}}
+{{ $list := slice }}
+{{ $total := 0 }}
+{{ range $name, $items := site.Taxonomies.series }}
+  {{ $pages := $items.Pages.ByDate }}
+  {{ $list = $list | append (dict
+      "name" $name
+      "count" (len $items)
+      "url" (printf "series/%s/" ($name | urlize))
+      "first" (index $pages 0)
+      "last" (index $pages (sub (len $pages) 1))
+  ) }}
+  {{ $total = add $total (len $items) }}
+{{ end }}
+
+<section class="page-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">SERIES  /  系列</span></div>
+  <div class="titlerow">
+    <h1 class="h1">系列</h1>
+    <p class="aside">同一个问题写成几篇的，串成一条线。<br>按顺序读有前后文，跳读也成立。</p>
+  </div>
+  <div class="metarow">
+    <span class="l pre">{{ len $list }} 个系列   ·   {{ $total }} 篇</span>
+    <a class="r" href="{{ "archive/" | relURL }}">按时间看 →</a>
+  </div>
+</section>
+
+<div class="catalog">
+  {{ range $list }}
+  <a class="entry" href="{{ .url | relURL }}">
+    <span class="meta">
+      <span class="l pre">{{ printf "%02d" .count }} PARTS</span>
+      <span class="r pre">{{ .first.Date.Format "2006.01" }} — {{ .last.Date.Format "2006.01" }}</span>
+    </span>
+    <h2 class="t">{{ .name }}</h2>
+    <p class="a">{{ .last.Params.summary | truncate 90 }}</p>
+  </a>
+  {{ end }}
+</div>
+
+{{ else }}
+{{ $taglist := sort (partial "tag-list.html" .) "count" "desc" }}
+{{ $total := 0 }}
+{{ range $taglist }}{{ $total = add $total .count }}{{ end }}
+
+<section class="page-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">TAGS  /  全部主题</span></div>
+  <div class="titlerow">
+    <h1 class="h1">主题</h1>
+    <p class="aside">按文章数排序。一个标签只在一篇文章出现时，说明那篇还没找到同伴。</p>
+  </div>
+  <div class="metarow">
+    <span class="l pre">{{ len $taglist }} 个主题   ·   {{ $total }} 次引用   ·   平均每篇 {{ printf "%.1f" (div (float $total) (float (len (where site.RegularPages "Section" "writing")))) }} 个标签</span>
+    <a class="r" href="{{ "index.xml" | relURL }}">RSS</a>
+  </div>
+</section>
+
+<div class="tag-dist">
+  <div class="dist-cap">
+    <span class="l">DISTRIBUTION / 分布</span>
+    <span class="r">TOP 5</span>
+  </div>
+  <div class="dist-bar">
+    {{ range first 5 $taglist }}
+    {{ $pct := mul (div (float .count) (float $total)) 100 }}
+    <div class="seg" style="width:{{ printf "%.2f" $pct }}%">
+      <span class="bar"></span>
+      <span class="lab">{{ .name }} {{ .count }}</span>
+    </div>
+    {{ end }}
+  </div>
+</div>
+
+<div class="tag-index-head">
+  <div class="bar"><span>TAG / 标签</span><span>COUNT / 篇数</span></div>
+</div>
+
+<div class="tag-index">
+  {{ range $taglist }}
+  <a class="tcell" href="{{ .url | relURL }}">
+    <span class="n">{{ .name }}</span><span class="c">{{ .count }}</span>
+  </a>
+  {{ end }}
+</div>
+
+<div class="tag-foot">
+  <div class="rule"></div>
+  <div class="bar">
+    <span class="l">{{ $total }} REFERENCES   ·   {{ len $taglist }} TAGS</span>
+    <a class="r" href="{{ "writing/" | relURL }}">返回文章 →</a>
+  </div>
+</div>
+<div class="tag-bottom"></div>
+{{ end }}
+{{ end }}

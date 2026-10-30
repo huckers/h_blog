@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>关于 — SCHEMATIC</title>
+<link rel="stylesheet" href="assets/schematic.css">
+<style>
+  .pagehead{padding-top:72px;padding-bottom:30px;border-bottom:1px solid var(--ink);}
+  .pagehead h1{font-size:40px;line-height:1.2;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin-top:16px;}
+  .aboutgrid{display:grid;grid-template-columns:1fr 376px;column-gap:80px;padding-top:56px;align-items:start;}
+  .aboutgrid h2{font-size:21px;font-weight:500;color:var(--ink);margin:44px 0 16px;padding-top:18px;border-top:1px solid var(--hair);}
+  .aboutgrid h2:first-child{margin-top:0;padding-top:0;border-top:none;}
+  .aboutgrid p{font-size:15px;line-height:1.95;color:var(--body);margin-bottom:20px;max-width:760px;}
+
+  .gitlog{border-top:1px solid var(--hair);}
+  .gitlog .gl{display:grid;grid-template-columns:80px 96px 1fr;align-items:center;height:38px;border-bottom:1px solid var(--hair);}
+  .gitlog .gl .h{font-family:var(--mono);font-size:10.5px;color:var(--signal);letter-spacing:.04em;}
+  .gitlog .gl .d{font-family:var(--mono);font-size:10.5px;color:var(--faint);font-variant-numeric:tabular-nums;}
+  .gitlog .gl .m{font-size:13px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="mark"></span><span class="name">Schematic</span><span class="sub">程序员技术博客</span></a>
+      <nav class="nav">
+        <a href="articles.html">文章</a>
+        <a href="series.html">系列</a>
+        <a href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a class="on" href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <section class="wrap">
+    <div class="pagehead">
+      <div class="kicker">Colophon / About</div>
+      <h1>关于</h1>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:0;">
+    <div class="aboutgrid">
+
+      <div>
+        <h2>这个站是干什么的</h2>
+        <p>
+          我写后端，也做一些前端和设计上的取舍。这个站用来存放那些「做完之后才想明白」的东西：
+          一个 schema 为什么这样切、一次构建为什么慢了三秒、一个方案为什么最后被放弃。
+        </p>
+        <p>
+          我刻意不写入门教程。网上已经足够多了，而且它们大多正确。
+          这里更关心的是<strong>在具体约束下选了什么、以及为什么没选另一个</strong>——
+          这部分内容很容易在半年后失效，但也正因为如此，它才值得记下来。
+        </p>
+
+        <h2>怎么组织</h2>
+        <p>
+          全站按主题分六个方向：Backend、Frontend、Database、Tooling、Design、Practice。
+          主题是筛选维度，标签是检索维度，两者不重叠。
+          系列则是「一个连续的问题被拆成几篇」时才建，不为了凑数量。
+        </p>
+        <p>
+          排版上没有用卡片。所有内容用 1px 细线分隔、用等宽字标注度量，
+          因为卡片会把所有条目压成同一个重量，而我想让密度承担层级。
+        </p>
+
+        <h2>履历</h2>
+        <div class="gitlog">
+          <div class="gl"><span class="h">a3f9c21</span><span class="d">2026-10</span><span class="m">重做站点信息架构，扩到 10 个页面</span></div>
+          <div class="gl"><span class="h">7e0b4d8</span><span class="d">2025-10</span><span class="m">把 CMS 抽成多站点，四端共用内容模型</span></div>
+          <div class="gl"><span class="h">2c81f60</span><span class="d">2025-03</span><span class="m">自研静态生成器替换 Hexo，构建时间降 72%</span></div>
+          <div class="gl"><span class="h">9d5a073</span><span class="d">2024-02</span><span class="m">第一次给站点加检索，用 lunr 硬撑了两年</span></div>
+          <div class="gl"><span class="h">4b6c81e</span><span class="d">2021-03</span><span class="m">第一篇文章，用的还是默认主题</span></div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="titleblock">
+          <div class="tb-head"><span>Site</span><span class="dot"></span></div>
+          <div class="tb-row"><span class="k">Domain</span><span class="v">schematic.dev</span></div>
+          <div class="tb-row"><span class="k">Since</span><span class="v num">2021-03</span></div>
+          <div class="tb-row"><span class="k">Posts</span><span class="v num">104</span></div>
+          <div class="tb-row"><span class="k">Topics</span><span class="v num">06</span></div>
+          <div class="tb-row"><span class="k">Series</span><span class="v num">04</span></div>
+          <div class="tb-row"><span class="k">Locale</span><span class="v">zh-CN</span></div>
+          <div class="tb-row"><span class="k">License</span><span class="v">BY-NC-SA 4.0</span></div>
+        </div>
+
+        <div class="rail-block mt-32">
+          <div class="rail-title"><span>Stack</span></div>
+          <div class="mono" style="font-size:11.5px;line-height:2.3;color:var(--muted);letter-spacing:.02em;">
+            TypeScript / Node 22<br>
+            Vite · 自研 SSG<br>
+            Spring Boot 3 / MySQL 8<br>
+            Sarasa Gothic SC · JetBrains Mono<br>
+            Instrument Serif
+          </div>
+          <div class="rule-ink gap"></div>
+        </div>
+
+        <div class="rail-block">
+          <div class="rail-title"><span>Contact</span></div>
+          <div class="panel-line">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--body);letter-spacing:.02em;">hi@schematic.dev</div>
+            <div class="mono" style="font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:8px;">通常 2 个工作日内回复</div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal"><span>© 2026 Schematic</span><span>Built with a hand-rolled SSG</span></div>
+    </div>
+  </footer>
+</body>
+</html>

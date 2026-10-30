@@ -1,0 +1,66 @@
+{{ define "main" }}
+{{ $posts := .Pages.ByDate.Reverse }}
+{{ $n := len $posts }}
+{{ $newest := index $posts 0 }}
+{{ $oldest := index $posts (sub $n 1) }}
+{{ $paginator := .Paginate $posts 12 }}
+
+<section class="page-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">WRITING  /  全部文章</span></div>
+  <div class="titlerow">
+    <h1 class="h1">文章</h1>
+    <p class="aside">按发布时间倒序。<br>要看结构，去归档；要找那一篇，用检索。</p>
+  </div>
+  <div class="metarow">
+    <span class="l pre">{{ $n }} 篇   ·   {{ len site.Taxonomies.tags }} 个主题   ·   {{ $oldest.Date.Format "2006.01" }} — {{ $newest.Date.Format "2006.01" }}</span>
+    <a class="r" href="{{ "index.xml" | relURL }}">RSS</a>
+  </div>
+</section>
+
+<div class="toolbar">
+  <span class="pill on">最新</span>
+  <a class="pill off" href="{{ "archive/" | relURL }}">按年份</a>
+  <a class="pill off" href="{{ "tags/" | relURL }}">按主题</a>
+  <span class="note pre">每页 12 篇   ·   第 {{ printf "%02d" $paginator.PageNumber }} / {{ printf "%02d" $paginator.TotalPages }} 页   ·   按发布时间倒序</span>
+</div>
+<div class="rule-full"></div>
+
+<div class="catalog">
+  {{ $offset := mul (sub $paginator.PageNumber 1) 12 }}
+  {{ range $i, $p := $paginator.Pages }}
+  <a class="entry" href="{{ $p.RelPermalink }}">
+    <span class="meta">
+      <span class="l pre">{{ printf "%02d" (add $offset $i 1) }}   ·   {{ index $p.Params.tags 0 }}{{ with $p.Params.series }}   ·   {{ . | truncate 12 }}{{ end }}</span>
+      <span class="r pre">{{ $p.Date.Format "2006.01.02" }}   ·   {{ partial "readtime.html" $p }} MIN</span>
+    </span>
+    <h2 class="t">{{ $p.Title }}</h2>
+    <p class="a">{{ $p.Params.summary }}</p>
+  </a>
+  {{ end }}
+</div>
+
+<div class="pager">
+  <span class="note">{{ $n }} 篇   ·   第 {{ printf "%02d" $paginator.PageNumber }} / {{ printf "%02d" $paginator.TotalPages }} 页</span>
+  <div class="nums">
+    {{ if $paginator.HasPrev }}
+    <a class="arrow" href="{{ $paginator.Prev.URL }}">←</a>
+    {{ else }}
+    <span class="arrow">←</span>
+    {{ end }}
+
+    {{ range $paginator.Pagers }}
+      {{ if eq .PageNumber $paginator.PageNumber }}
+      <span class="pnum on">{{ printf "%02d" .PageNumber }}</span>
+      {{ else }}
+      <a class="pnum off" href="{{ .URL }}">{{ printf "%02d" .PageNumber }}</a>
+      {{ end }}
+    {{ end }}
+
+    {{ if $paginator.HasNext }}
+    <a class="arrow next" href="{{ $paginator.Next.URL }}">→</a>
+    {{ else }}
+    <span class="arrow">→</span>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

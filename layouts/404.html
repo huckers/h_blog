@@ -1,0 +1,47 @@
+{{ define "main" }}
+{{ $posts := (where site.RegularPages "Section" "writing").ByDate.Reverse }}
+{{ $recent := first 5 $posts }}
+
+<div class="nf-hero">
+  <div class="nf-num-col">
+    <span class="nf-num">404</span>
+    <div class="nf-dim">
+      <div class="row"><span class="t"></span><span class="lab">REQUESTED PATH</span><span class="t"></span></div>
+      <div class="rule"></div>
+      <div class="row"><span class="t"></span><span class="lab">NO MATCH IN INDEX</span><span class="t"></span></div>
+    </div>
+  </div>
+
+  <div class="nf-copy">
+    <span class="nf-kicker">NOT FOUND</span>
+    <h1 class="nf-title">这条路径上没有图纸。</h1>
+    <p class="nf-sub">链接可能被改过名，也可能那篇文章被我删了——通常是它写得不够好。下面几条路径还在。</p>
+
+    <div class="trace">
+      <span class="l1">GET {{ .RelPermalink }}   →   404</span>
+      <span class="l2">SEARCHED   {{ len $posts }} ENTRIES   ·   0 MATCH</span>
+    </div>
+
+    <div class="nf-actions">
+      <a class="btn-dim" href="{{ "writing/" | relURL }}">去看全部文章</a>
+      <a class="btn-line" href="{{ "search/" | relURL }}">用检索找</a>
+    </div>
+  </div>
+</div>
+
+<div class="latest">
+  <div class="latest-head"><span>RECENT / 最近更新</span><span>{{ len $posts }} ENTRIES</span></div>
+  {{ range $recent }}
+  <a class="latest-row" href="{{ .RelPermalink }}">
+    <span class="d">{{ .Date.Format "2006.01.02" }}</span>
+    <span class="t">{{ .Title }}</span>
+    <span class="g">{{ index .Params.tags 0 }}</span>
+  </a>
+  {{ end }}
+  <div class="closing-rule"></div>
+  <div class="latest-foot">
+    <span class="l">END</span>
+    <a class="r" href="{{ "archive/" | relURL }}">全部归档 →</a>
+  </div>
+</div>
+{{ end }}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>系列 — SCHEMATIC</title>
+<link rel="stylesheet" href="assets/schematic.css">
+<style>
+  .pagehead{padding-top:72px;padding-bottom:30px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--ink);}
+  .pagehead h1{font-size:40px;line-height:1.2;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin-top:16px;}
+  .pagehead .note{max-width:420px;font-size:12.5px;line-height:1.85;color:var(--faint);padding-bottom:6px;}
+
+  .sblock{display:grid;grid-template-columns:180px 1fr;column-gap:48px;padding-top:52px;padding-bottom:52px;border-bottom:1px solid var(--hair);}
+  .sblock:last-of-type{border-bottom:none;}
+  .sblock .idx{font-family:var(--serif);font-size:64px;line-height:1;color:var(--ink);}
+  .sblock .smeta{margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);line-height:2;}
+  .sblock .stitle{font-size:26px;font-weight:500;line-height:1.4;color:var(--ink);letter-spacing:.005em;}
+  .sblock .sdesc{margin-top:14px;font-size:13.5px;line-height:1.9;color:var(--muted);max-width:760px;}
+
+  .sitems{margin-top:26px;border-top:1px solid var(--ink);}
+  .sitem{display:grid;grid-template-columns:44px 1fr 96px 56px;align-items:center;height:52px;padding:0 12px;border-bottom:1px solid var(--hair);}
+  .sitem:hover{background:var(--paper-2);}
+  .sitem .sn{font-family:var(--mono);font-size:10px;color:var(--signal);letter-spacing:.08em;}
+  .sitem .st{font-size:14px;color:var(--body);}
+  .sitem:hover .st{color:var(--ink);}
+  .sitem .sd{font-family:var(--mono);font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums;}
+  .sitem .sm{font-family:var(--mono);font-size:10px;color:var(--faint);text-align:right;font-variant-numeric:tabular-nums;}
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="mark"></span><span class="name">Schematic</span><span class="sub">程序员技术博客</span></a>
+      <nav class="nav">
+        <a href="articles.html">文章</a>
+        <a class="on" href="series.html">系列</a>
+        <a href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <section class="wrap">
+    <div class="pagehead">
+      <div>
+        <div class="kicker">Series / 04</div>
+        <h1>系列</h1>
+      </div>
+      <p class="note">
+        只有当一个连续的问题被拆成好几篇时才会建系列。不为凑数量，也不做「教程合集」。
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:0;">
+
+    <!-- 01 -->
+    <div class="sblock">
+      <div>
+        <div class="idx num">01</div>
+        <div class="smeta">12 篇<br>2025-03 →<br>2026-10</div>
+      </div>
+      <div>
+        <h2 class="stitle">SCHEMATIC 手记</h2>
+        <p class="sdesc">关于「这个站为什么长成这样」。从信息架构、排版选择到自研生成器，把做决定的过程一条条记下来。</p>
+        <div class="sitems">
+          <a class="sitem" href="article.html"><span class="sn">012</span><span class="st">把 CMS 做成多站点：一次 schema 设计的取舍</span><span class="sd">2026-10-27</span><span class="sm">14</span></a>
+          <a class="sitem" href="article.html"><span class="sn">011</span><span class="st">用 1px 线做界面：反卡片的排版实践</span><span class="sd">2026-10-15</span><span class="sm">16</span></a>
+          <a class="sitem" href="article.html"><span class="sn">010</span><span class="st">静态站点的检索，从 lunr 到自研</span><span class="sd">2026-09-18</span><span class="sm">15</span></a>
+        </div>
+        <div class="row" style="justify-content:flex-end;margin-top:18px;">
+          <a class="btn-sm" href="articles.html">全部 12 篇 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="sblock">
+      <div>
+        <div class="idx num">02</div>
+        <div class="smeta">08 篇<br>2025-11 →<br>2026-10</div>
+      </div>
+      <div>
+        <h2 class="stitle">支付集成实战</h2>
+        <p class="sdesc">三把钥匙、四种回调、两个不对用户明说的异步状态。这一组记录的是真正上线跑过一遍之后才知道的事。</p>
+        <div class="sitems">
+          <a class="sitem" href="article.html"><span class="sn">008</span><span class="st">微信支付 APIv3 踩坑清单</span><span class="sd">2026-10-02</span><span class="sm">22</span></a>
+          <a class="sitem" href="article.html"><span class="sn">007</span><span class="st">退款不是「点一下就退了」</span><span class="sd">2026-09-05</span><span class="sm">18</span></a>
+          <a class="sitem" href="article.html"><span class="sn">006</span><span class="st">同一笔订单能不能重复下单</span><span class="sd">2026-08-14</span><span class="sm">13</span></a>
+        </div>
+        <div class="row" style="justify-content:flex-end;margin-top:18px;">
+          <a class="btn-sm" href="articles.html">全部 08 篇 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="sblock">
+      <div>
+        <div class="idx num">03</div>
+        <div class="smeta">09 篇<br>2025-06 →<br>2026-09</div>
+      </div>
+      <div>
+        <h2 class="stitle">设计系统落地</h2>
+        <p class="sdesc">从「一套令牌撑四个项目」到「为什么最后又退回原生 CSS」。中间踩过的坑比成果多，都留着。</p>
+        <div class="sitems">
+          <a class="sitem" href="article.html"><span class="sn">009</span><span class="st">设计系统不是组件库：一套令牌撑四个项目</span><span class="sd">2026-08-28</span><span class="sm">19</span></a>
+          <a class="sitem" href="article.html"><span class="sn">005</span><span class="st">组件库的暗面：为什么我们最后用了原生 CSS</span><span class="sd">2025-07-22</span><span class="sm">18</span></a>
+          <a class="sitem" href="article.html"><span class="sn">004</span><span class="st">CSS 里的度量系统：rem 之外的选择</span><span class="sd">2024-09-21</span><span class="sm">14</span></a>
+        </div>
+        <div class="row" style="justify-content:flex-end;margin-top:18px;">
+          <a class="btn-sm" href="articles.html">全部 09 篇 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div class="sblock">
+      <div>
+        <div class="idx num">04</div>
+        <div class="smeta">07 篇<br>2025-12 →<br>2026-09</div>
+      </div>
+      <div>
+        <h2 class="stitle">性能排查手册</h2>
+        <p class="sdesc">慢在哪儿、怎么量、改完是不是真的变快了。每一步都附上我自己跑出来的数字，而不是「大概快了」。 </p>
+        <div class="sitems">
+          <a class="sitem" href="article.html"><span class="sn">007</span><span class="st">Vite 冷启动从 8s 到 1.2s 的三次尝试</span><span class="sd">2026-10-24</span><span class="sm">11</span></a>
+          <a class="sitem" href="article.html"><span class="sn">006</span><span class="st">把 CI 从 19 分钟压到 6 分钟</span><span class="sd">2026-09-11</span><span class="sm">12</span></a>
+          <a class="sitem" href="article.html"><span class="sn">005</span><span class="st">一次慢查询排查：从 4.2s 到 80ms</span><span class="sd">2025-12-19</span><span class="sm">16</span></a>
+        </div>
+        <div class="row" style="justify-content:flex-end;margin-top:18px;">
+          <a class="btn-sm" href="articles.html">全部 07 篇 →</a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal"><span>© 2026 Schematic</span><span>Built with a hand-rolled SSG</span></div>
+    </div>
+  </footer>
+</body>
+</html>

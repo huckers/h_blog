@@ -1,0 +1,94 @@
+# ============================================================
+#  H_BLOG — Hugo 配置
+#  部署：Cloudflare Pages · build `hugo -b $CF_PAGES_URL` · output `public`
+#  版本：必须在 Pages 项目里设 HUGO_VERSION（见 README）
+# ============================================================
+
+# 生产域名。CF Pages 构建时用 -b $CF_PAGES_URL 覆盖它，
+# 否则 Preview / 分支预览的 RSS 和 sitemap 会指向生产域名。
+baseURL = "https://huc.site/"
+title = "H_BLOG"
+locale = "zh-CN"
+defaultContentLanguage = "zh"
+timeZone = "Asia/Shanghai"
+enableRobotsTXT = true
+hasCJKLanguage = true
+enableEmoji = false
+
+# 中文段落里允许原始 HTML（文章里需要 <br>、<kbd> 之类）
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.goldmark.parser]
+  autoHeadingID = true
+  wrapStandAloneImageWithinParagraph = false
+
+# 代码高亮：输出 class 而不是内联样式，
+# 由 assets/css/proto.css 里的 .chroma 规则接管配色
+[markup.highlight]
+  noClasses = false
+  lineNos = false
+  codeFences = true
+  guessSyntax = false
+
+# 文章 URL：/writing/<slug>/  （slug 默认取文件名）
+[permalinks]
+  writing = "/writing/:contentbasename/"
+
+# 内建分类法：tags + series 自动聚合成索引页
+[taxonomies]
+  tag = "tags"
+  series = "series"
+
+# 首页额外吐一份 JSON，给检索页做客户端索引
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[pagination]
+  pagerSize = 20
+
+[params]
+  version    = "v2.4.1"
+  author     = "Hucker"
+  # 设计稿是「中文名 / 拉丁名」成对显示。现在两边同一个名字，重复没意义，
+  # 留空即可——模板里用 {{ with }} 判断，空就不渲染「 / XXX」后缀。
+  authorEn   = ""
+  field      = "工程实践 · 系统"
+  headline1  = "把踩过的坑，"
+  headline2  = "写成能复用的图纸。"
+  intro      = "这里不写教程，只留过程：一次 schema 为什么这样切、一段构建为什么慢了三秒、一个方案为什么最后被放弃。每条都在真实的项目里跑过。"
+  statement  = "写代码，<br>也写对代码的怀疑。"
+  since      = "2026"
+  license    = "CC BY-NC 4.0"
+  copyright  = "2026 Hucker"
+  email      = "zthack8@gmail.com"
+  # 源码托管。用 Gitee，所以参数不叫 github —— 模板里还拿 repoName 当链接文字，
+  # 换到别的托管只改这两行，不用动模板。
+  repo       = "https://gitee.com/hucker"
+  repoName   = "Gitee"
+  # 首页右栏「现在」
+  now = [
+    { k = "读", v = "DDIA 第七章 事务" },
+    { k = "写", v = "一致性模型图谱（草稿 3）" },
+    { k = "修", v = "这个博客的渲染引擎" },
+  ]
+
+[[menu.main]]
+  name = "文章"
+  url = "/writing/"
+  weight = 10
+
+[[menu.main]]
+  name = "归档"
+  url = "/archive/"
+  weight = 20
+
+[[menu.main]]
+  name = "系列"
+  url = "/series/"
+  weight = 30
+
+[[menu.main]]
+  name = "关于"
+  url = "/about/"
+  weight = 40

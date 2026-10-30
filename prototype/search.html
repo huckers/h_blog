@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>H_BLOG — 检索：事务边界</title>
+<link rel="stylesheet" href="assets/proto.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <span class="wordmark">H_BLOG</span>
+      <span class="sep"></span>
+      <span class="ver">v2.4.1</span>
+    </a>
+    <nav class="nav">
+      <a href="writing.html">文章<i></i></a>
+      <a href="archive.html">归档<i></i></a>
+      <a href="series.html">系列<i></i></a>
+      <a href="about.html">关于<i></i></a>
+    </nav>
+    <div class="head-act">
+      <a class="searchbox" href="search.html">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <circle cx="4.6" cy="4.6" r="3" stroke="#5A554C" stroke-width="1.2"/>
+          <path d="M7 7L10 10" stroke="#5A554C" stroke-width="1.2"/>
+        </svg>
+        <span class="ph">检索</span>
+        <span class="kbd">CMD K</span>
+      </a>
+      <a class="btn-rss" href="confirm.html"><span>订阅 RSS</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- 检索页头 -->
+<section class="search-head">
+  <div class="labelrow" style="display:flex;align-items:center;gap:12px;">
+    <span class="dot" style="width:6px;height:6px;background:var(--signal);"></span>
+    <span class="pre" style="font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:1.2px;color:var(--ink);">SEARCH  /  全站检索</span>
+  </div>
+  <div class="query-row">
+    <div class="query"><span class="q">事务边界</span><span class="caret"></span></div>
+    <span class="scope pre">全库  ·  FULLTEXT</span>
+  </div>
+  <div class="input-line"></div>
+  <div class="search-stats">
+    <span class="l pre">12 条结果   ·   4.2 ms   ·   索引 104 篇</span>
+    <span class="r pre">排序：相关度 ↓</span>
+  </div>
+</section>
+
+<!-- 结果筛选 -->
+<div class="filter-row">
+  <span class="chip on pre">全部 12</span>
+  <a class="chip off pre" href="#">文章 8</a>
+  <a class="chip off pre" href="#">笔记 3</a>
+  <a class="chip off pre" href="#">系列 1</a>
+  <a class="chip off pre" href="#">标签 0</a>
+  <span class="spacer"></span>
+  <span class="hint pre">SINGLE SELECT   ·   MATCH 全文   ·   已启用中文分词</span>
+</div>
+<div class="rule-full"></div>
+
+<!-- 结果 -->
+<div class="results-wrap">
+  <div class="results-main">
+    <div class="sec-head"><span>文章 / ARTICLES</span><span class="pre">8 条   ·   按相关度</span></div>
+
+    <a class="result" href="article.html">
+      <span class="meta"><span class="p">/2026/03/order-state</span><span class="h pre">HITS 6</span></span>
+      <span class="t">把时间当成状态的代价</span>
+      <span class="a">订单状态一旦带上时间戳，缓存与事务就开始互相污染。这四条记录的是三次线上事故的共同形状。</span>
+    </a>
+    <a class="result" href="article.html">
+      <span class="meta"><span class="p">/2025/11/incident-log</span><span class="h pre">HITS 4</span></span>
+      <span class="t">事故现场</span>
+      <span class="a">从一条超时告警查到跨库写入，中间隔了 47 分钟，其中 31 分钟在怀疑监控。</span>
+    </a>
+    <a class="result" href="article.html">
+      <span class="meta"><span class="p">/2026/02/three-fixes</span><span class="h pre">HITS 3</span></span>
+      <span class="t">三条修正</span>
+      <span class="a">关单、缓存、幂等键。三条我当年都以为已经想清楚了，后来又各自改了一遍。</span>
+    </a>
+
+    <div class="sec-head"><span>笔记 / NOTES</span><span class="pre">3 条   ·   未成文</span></div>
+    <a class="result" href="#">
+      <span class="meta"><span class="p">/notes/idempotency</span><span class="h pre">HITS 2</span></span>
+      <span class="t">幂等键为什么不能用时间戳</span>
+      <span class="a">一段没写进正文的推导，太长，留在这里。结论是「可以，但你得先把时钟扔掉」。</span>
+    </a>
+
+    <div class="related-searches">
+      <span class="k pre">相关检索</span>
+      <a class="rchip" href="#">事务隔离</a>
+      <a class="rchip" href="#">幂等</a>
+      <a class="rchip" href="#">两阶段提交</a>
+      <a class="rchip" href="#">分布式锁</a>
+    </div>
+
+    <div class="closing-rule"></div>
+    <div class="results-foot">
+      <span class="l pre">只显示相关度前 12 条   ·   索引延迟 30 s</span>
+      <a class="r" href="#">扩大检索范围  →</a>
+    </div>
+  </div>
+
+  <!-- 右栏 -->
+  <aside class="search-rail">
+    <div class="syntax">
+      <div class="spec-head"><span class="l pre">SYNTAX / 检索语法</span><span class="r pre">4 条</span></div>
+      <div class="syntax-item"><span class="c">tag: 内核</span><span class="d">按主题过滤</span></div>
+      <div class="syntax-item"><span class="c">series: 02</span><span class="d">限定在某个系列内</span></div>
+      <div class="syntax-item"><span class="c">after: 2025-06</span><span class="d">时间下限</span></div>
+      <div class="syntax-item"><span class="c">is: draft</span><span class="d">把草稿也算进来</span></div>
+      <div class="closing-rule"></div>
+    </div>
+
+    <div class="hot">
+      <div class="spec-head"><span class="l pre">RECENT / 热门检索</span><span class="r pre">近 7 天</span></div>
+      <a class="hot-row" href="#"><span class="k">事务边界</span><span class="c">6</span></a>
+      <a class="hot-row" href="#"><span class="k">幂等键</span><span class="c">4</span></a>
+      <a class="hot-row" href="#"><span class="k">缓存击穿</span><span class="c">3</span></a>
+      <a class="hot-row" href="#"><span class="k">关单</span><span class="c">2</span></a>
+      <a class="hot-row" href="#"><span class="k">B+ 树</span><span class="c">2</span></a>
+      <div class="closing-rule"></div>
+    </div>
+
+    <div class="sub-note">
+      <span class="h pre">SUBSCRIBE / 订阅</span>
+      <p>每月一封。新文章、踩到的坑，以及删稿理由。</p>
+      <a href="confirm.html">留下邮箱  →</a>
+    </div>
+  </aside>
+</div>
+
+<footer class="footer">
+  <div class="top">
+    <div class="fleft">
+      <p class="fstatement">写代码，<br>也写对代码的怀疑。</p>
+      <p class="fmeta pre">BLOG ENGINE v2.4   ·   STATIC   ·   NO TRACKING</p>
+    </div>
+    <div class="flinks">
+      <div class="col nav-col">
+        <span class="head">导航</span>
+        <a class="link" href="writing.html">文章索引</a>
+        <a class="link" href="archive.html">归档</a>
+        <a class="link" href="series.html">系列</a>
+        <a class="link" href="about.html">关于</a>
+      </div>
+      <div class="col feed-col">
+        <span class="head">订阅</span>
+        <a class="link" href="confirm.html">RSS</a>
+        <a class="link" href="confirm.html">邮件通讯</a>
+        <a class="link" href="#">源码</a>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+  <div class="bottom">
+    <span class="copy">2026 Hucker   ·   全部内容以 CC BY-NC 4.0 发布</span>
+    <span class="colophon pre">DESIGNED IN A TEXT EDITOR   ·   NO FRAMEWORK   ·   1440 GRID</span>
+    <a class="totop" href="#">TOP
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M5 9V1.2" stroke="#B8B2A4" stroke-width="1.2"/>
+        <path d="M1.4 4.8L5 1.2L8.6 4.8" stroke="#B8B2A4" stroke-width="1.2"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>H_BLOG — 确认你的邮箱</title>
+<link rel="stylesheet" href="assets/proto.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <span class="wordmark">H_BLOG</span>
+      <span class="sep"></span>
+      <span class="ver">v2.4.1</span>
+    </a>
+    <nav class="nav">
+      <a href="writing.html">文章<i></i></a>
+      <a href="archive.html">归档<i></i></a>
+      <a href="series.html">系列<i></i></a>
+      <a href="about.html">关于<i></i></a>
+    </nav>
+    <div class="head-act">
+      <a class="searchbox" href="search.html">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <circle cx="4.6" cy="4.6" r="3" stroke="#5A554C" stroke-width="1.2"/>
+          <path d="M7 7L10 10" stroke="#5A554C" stroke-width="1.2"/>
+        </svg>
+        <span class="ph">检索</span>
+        <span class="kbd">CMD K</span>
+      </a>
+      <a class="btn-rss" href="confirm.html"><span>订阅 RSS</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- 确认页头 pad[56,360,30,360] gap18，内容列 720 -->
+<section class="cf-head">
+  <div class="cf-label">
+    <i class="dot"></i>
+    <span class="t pre">SUBSCRIBE  /  订阅</span>
+  </div>
+  <h1 class="cf-title">确认你的邮箱</h1>
+  <p class="cf-sub">确认信已经发到 chen@example.com。点开里面的链接，订阅才算生效——在确认之前，你不会收到任何邮件，我也不会。</p>
+</section>
+
+<!-- 订阅回执 720 宽 · pad[20,18,18,18] · 描边 #16181A -->
+<div class="cf-receipt">
+  <div class="cf-rc-head">
+    <span class="l pre">订阅回执 / RECEIPT</span>
+    <span class="r pre">NO. 0012</span>
+  </div>
+  <div class="cf-row">
+    <span class="k">EMAIL</span>
+    <span class="v">chen@example.com</span>
+  </div>
+  <div class="cf-row">
+    <span class="k">STATUS</span>
+    <span class="v sig">待确认 · PENDING</span>
+  </div>
+  <div class="cf-row">
+    <span class="k">SENT</span>
+    <span class="v pre">2026.10.29  11:04</span>
+  </div>
+  <div class="cf-row">
+    <span class="k">EXPIRES</span>
+    <span class="v sans">24 小时后失效</span>
+  </div>
+  <p class="cf-rc-note">确认链接只能用一次。失效了重新提交即可，不用找我。</p>
+</div>
+
+<!-- 进度 pad[40,360,0,360] gap16 -->
+<section class="cf-prog">
+  <div class="cf-prog-cap">
+    <span class="l">进度 / PROGRESS</span>
+    <span class="r pre">第 2 步   ·   等你在邮件里点一下</span>
+  </div>
+  <div class="cf-steps">
+    <div class="cf-step">
+      <i class="bar"></i>
+      <span class="t">提交邮箱</span>
+      <span class="m pre">已完成  11:04</span>
+    </div>
+    <div class="cf-step is-now">
+      <i class="bar"></i>
+      <span class="t">点开确认信</span>
+      <span class="m">待你操作</span>
+    </div>
+    <div class="cf-step is-todo">
+      <i class="bar"></i>
+      <span class="t">等第一期</span>
+      <span class="m">每月 1 号发出</span>
+    </div>
+  </div>
+</section>
+
+<!-- 接下来 pad[46,360,0,360] -->
+<section class="cf-actions">
+  <span class="kicker pre">接下来 / NEXT</span>
+  <div class="cf-btns">
+    <a class="cf-btn solid" href="#">重发确认信</a>
+    <a class="cf-btn line" href="confirm.html">改邮箱地址</a>
+  </div>
+  <div class="cf-hint">
+    <span>十分钟内没收到，先翻一下垃圾邮件文件夹。</span>
+  </div>
+</section>
+
+<!-- 闭合 pad[52,360,40,360] -->
+<section class="cf-closing">
+  <div class="cf-rule"></div>
+  <div class="cf-meta">
+    <span class="l">订阅状态 PENDING · 确认后跳回文章列表</span>
+    <span class="r">SCHEMATIC / 2026</span>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="top">
+    <div class="fleft">
+      <p class="fstatement">写代码，<br>也写对代码的怀疑。</p>
+      <p class="fmeta pre">BLOG ENGINE v2.4   ·   STATIC   ·   NO TRACKING</p>
+    </div>
+    <div class="flinks">
+      <div class="col nav-col">
+        <span class="head">导航</span>
+        <a class="link" href="writing.html">文章索引</a>
+        <a class="link" href="archive.html">归档</a>
+        <a class="link" href="series.html">系列</a>
+        <a class="link" href="about.html">关于</a>
+      </div>
+      <div class="col feed-col">
+        <span class="head">订阅</span>
+        <a class="link" href="confirm.html">RSS</a>
+        <a class="link" href="confirm.html">邮件通讯</a>
+        <a class="link" href="#">源码</a>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+  <div class="bottom">
+    <span class="copy">2026 Hucker   ·   全部内容以 CC BY-NC 4.0 发布</span>
+    <span class="colophon pre">DESIGNED IN A TEXT EDITOR   ·   NO FRAMEWORK   ·   1440 GRID</span>
+    <a class="totop" href="#">TOP
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M5 9V1.2" stroke="#B8B2A4" stroke-width="1.2"/>
+        <path d="M1.4 4.8L5 1.2L8.6 4.8" stroke="#B8B2A4" stroke-width="1.2"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>

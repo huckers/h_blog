@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>SCHEMATIC — 程序员技术博客</title>
+<link rel="stylesheet" href="assets/schematic.css">
+</head>
+<body>
+
+  <!-- ==================== 页头 ==================== -->
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html">
+        <span class="mark"></span>
+        <span class="name">Schematic</span>
+        <span class="sub">程序员技术博客</span>
+      </a>
+      <nav class="nav">
+        <a href="articles.html">文章</a>
+        <a href="series.html">系列</a>
+        <a href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <!-- ==================== 首屏 ==================== -->
+  <section class="wrap" style="padding-top:96px;padding-bottom:8px;">
+    <div style="display:grid;grid-template-columns:1fr 376px;gap:72px;align-items:start;">
+
+      <div>
+        <div class="kicker">Field Notes / 2026</div>
+        <h1 style="font-size:52px;line-height:1.32;font-weight:500;letter-spacing:-.005em;color:var(--ink);margin-top:22px;">
+          把构建、调试与取舍，<br>记成可以查的图纸。
+        </h1>
+        <p style="font-size:15.5px;line-height:1.95;color:var(--muted);margin-top:24px;max-width:620px;">
+          这里不写教程，只留过程：一次 schema 设计为什么这样切、一段构建为什么慢了三秒、
+          一个方案为什么最后被放弃。每条都在真实的项目里跑过。
+        </p>
+        <div class="row" style="gap:0;margin-top:36px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);height:52px;">
+          <div class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding-right:28px;border-right:1px solid var(--hair);">
+            <span class="num" style="color:var(--ink);font-size:14px;letter-spacing:0;margin-right:8px;">104</span>篇
+          </div>
+          <div class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding:0 28px;border-right:1px solid var(--hair);">
+            <span class="num" style="color:var(--ink);font-size:14px;letter-spacing:0;margin-right:8px;">06</span>主题
+          </div>
+          <div class="mono" style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding-left:28px;">
+            最近更新 <span class="num" style="color:var(--ink);font-size:12px;letter-spacing:.02em;margin-left:8px;">2026-10-29</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 技术档案 Title Block -->
+      <aside class="titleblock">
+        <div class="tb-head">
+          <span>Site Spec</span>
+          <span class="dot"></span>
+        </div>
+        <div class="tb-row"><span class="k">Build</span><span class="v">自研 SSG</span></div>
+        <div class="tb-row"><span class="k">Stack</span><span class="v">Vite · MDX · TS</span></div>
+        <div class="tb-row"><span class="k">Theme</span><span class="v">SCHEMATIC v1</span></div>
+        <div class="tb-row"><span class="k">Posts</span><span class="v num">104</span></div>
+        <div class="tb-row"><span class="k">Topics</span><span class="v num">06</span></div>
+        <div class="tb-row"><span class="k">Since</span><span class="v num">2021-03</span></div>
+        <div class="tb-row"><span class="k">License</span><span class="v">CC BY-NC-SA</span></div>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- ==================== 度量条 ==================== -->
+  <div class="wrap mt-64">
+    <div class="dim">
+      <span class="txt">Index / 最近入库</span>
+      <span class="line"></span>
+      <span class="txt num">10 / 104</span>
+    </div>
+  </div>
+
+  <!-- ==================== 台账 ==================== -->
+  <section class="wrap">
+    <div class="ledger">
+      <div class="thead" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span>No.</span><span>Title</span><span>Topic</span><span>Date</span><span style="text-align:right;">Min</span>
+      </div>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--signal);">001</span>
+        <span class="t">把 CMS 做成多站点：一次 schema 设计的取舍<em>cms-multi-site-schema</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">BACKEND</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-10-27</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">14</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">002</span>
+        <span class="t">Vite 冷启动从 8s 到 1.2s 的三次尝试<em>vite-cold-start</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">FRONTEND</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-10-24</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">11</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">003</span>
+        <span class="t">Spring Boot 3 的 AOT 到底省了什么<em>spring-aot-cost</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">BACKEND</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-10-19</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">18</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">004</span>
+        <span class="t">用 1px 线做界面：反卡片的排版实践<em>one-pixel-layout</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">DESIGN</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-10-15</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">16</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">005</span>
+        <span class="t">MySQL 索引下推，别只看文档的例子<em>mysql-icp</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">DATABASE</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-10-09</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">13</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">006</span>
+        <span class="t">微信支付 APIv3 踩坑清单<em>wxpay-v3-notes</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">PRACTICE</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-10-02</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">22</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">007</span>
+        <span class="t">Ant Design Vue 4 表单的受控陷阱<em>adv4-form-control</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">FRONTEND</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-09-26</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">9</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">008</span>
+        <span class="t">静态站点的检索，从 lunr 到自研<em>static-site-search</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">TOOLING</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-09-18</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">15</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">009</span>
+        <span class="t">把 CI 从 19 分钟压到 6 分钟<em>ci-19-to-6</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">TOOLING</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-09-11</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">12</span>
+      </a>
+
+      <a class="tr" href="article.html" style="grid-template-columns:64px 1fr 130px 120px 70px;">
+        <span class="mono num" style="font-size:10px;letter-spacing:.1em;color:var(--faint);">010</span>
+        <span class="t">关于日志：什么时候该打，什么时候是噪音<em>log-noise</em></span>
+        <span class="mono" style="font-size:9.5px;letter-spacing:.1em;color:var(--muted);">PRACTICE</span>
+        <span class="mono num" style="font-size:11px;color:var(--muted);">2026-09-03</span>
+        <span class="mono num" style="font-size:11px;color:var(--faint);text-align:right;">17</span>
+      </a>
+    </div>
+
+    <div class="row" style="justify-content:flex-end;margin-top:24px;">
+      <a class="btn-sm" href="articles.html">查看全部 104 篇</a>
+    </div>
+  </section>
+
+  <!-- ==================== 页脚 ==================== -->
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal">
+        <span>© 2026 Schematic</span>
+        <span>Built with a hand-rolled SSG</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{{ define "main" }}
+<div class="search-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">SEARCH  /  检索</span></div>
+  <div class="query-row">
+    <div class="query">
+      <input class="q" id="q" type="search" placeholder="输入关键词" autocomplete="off" spellcheck="false">
+      <span class="caret"></span>
+    </div>
+    <span class="scope">全文</span>
+  </div>
+  <div class="input-line"></div>
+  <div class="search-stats">
+    <span class="l" id="stat-l">等待输入</span>
+    <span class="r" id="stat-r"></span>
+  </div>
+</div>
+
+<div class="results-wrap">
+  <div class="results-main">
+    <div class="sec-head"><span>RESULTS / 结果</span><span id="result-count">—</span></div>
+    <div id="results"></div>
+  </div>
+
+  <aside class="search-rail">
+    <div>
+      <div class="rp-head"><span class="l">SYNTAX / 语法</span><span class="r">03</span></div>
+      <div class="syntax-item"><span class="c">空格</span><span class="d">多关键词取交集</span></div>
+      <div class="syntax-item"><span class="c">"引号"</span><span class="d">短语精确匹配</span></div>
+      <div class="syntax-item"><span class="c">tag:名字</span><span class="d">只在该主题下找</span></div>
+    </div>
+
+    <div>
+      <div class="rp-head"><span class="l">HOT / 热门</span><span class="r">{{ len site.Taxonomies.tags }}</span></div>
+      {{ range first 6 (sort (partial "tag-list.html" .) "count" "desc") }}
+      <a class="hot-row" href="{{ .url | relURL }}"><span class="k">{{ .name }}</span><span class="c">{{ .count }}</span></a>
+      {{ end }}
+    </div>
+
+    <div class="sub-note">
+      <span class="h">NO INDEX SERVER</span>
+      <p>索引在构建时生成，检索在浏览器里完成。没有请求发到任何服务器，也没有搜索词被记录。</p>
+      <a href="{{ "index.json" | relURL }}">查看原始索引 →</a>
+    </div>
+  </aside>
+</div>
+
+<script src="{{ "js/search.js" | relURL }}" data-index="{{ "index.json" | relURL }}" defer></script>
+{{ end }}

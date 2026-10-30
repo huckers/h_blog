@@ -1,0 +1,17 @@
+{{/*
+  统一的标签列表。
+  site.Taxonomies.tags 的 key 是小写化的，直接用它渲染会把 Hugo 显示成 hugo。
+  term page 的 .LinkTitle 保留了 frontmatter 里的原始写法，优先用它。
+*/}}
+{{ $out := slice }}
+{{ range $name, $items := site.Taxonomies.tags }}
+  {{ $title := $name }}
+  {{ with $items.Page }}{{ $title = .LinkTitle }}{{ end }}
+  {{ $out = $out | append (dict
+      "name"  $title
+      "key"   $name
+      "count" (len $items)
+      "url"   (printf "tags/%s/" ($name | urlize))
+  ) }}
+{{ end }}
+{{ return $out }}

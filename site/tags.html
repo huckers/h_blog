@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>标签 — SCHEMATIC</title>
+<link rel="stylesheet" href="assets/schematic.css">
+<style>
+  .pagehead{padding-top:72px;padding-bottom:28px;display:flex;align-items:flex-end;justify-content:space-between;}
+  .pagehead h1{font-size:40px;line-height:1.2;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin-top:16px;}
+
+  /* 分布条：5 段，按文章数排序，透明度递减表示占比 */
+  .dist{display:flex;gap:6px;margin-top:6px;}
+  .dseg{flex:1 1 0;min-width:0;}
+  .dseg .dlab{display:flex;gap:8px;align-items:baseline;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;white-space:nowrap;}
+  .dseg .dlab .n{color:var(--muted);}
+  .dseg .dbar{height:14px;background:var(--ink);}
+  .distnote{margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+
+  /* 标签索引表：3 列 × 426，间距 33，只留底边 */
+  .taggrid{display:grid;grid-template-columns:repeat(3,426px);column-gap:33px;row-gap:0;margin-top:48px;}
+  .tagcell{height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid var(--hair);}
+  .tagcell:hover{background:var(--paper-2);}
+  .tagcell .tn{font-size:14.5px;color:var(--body);letter-spacing:.02em;}
+  .tagcell:hover .tn{color:var(--ink);}
+  .tagcell .tc{font-family:var(--mono);font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums;}
+
+  .tagfoot{display:flex;align-items:center;justify-content:space-between;height:54px;
+    border-top:1px solid var(--ink);
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="mark"></span><span class="name">Schematic</span><span class="sub">程序员技术博客</span></a>
+      <nav class="nav">
+        <a href="articles.html">文章</a>
+        <a href="series.html">系列</a>
+        <a class="on" href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <section class="wrap">
+    <div class="pagehead">
+      <div>
+        <div class="kicker">Tags / 21</div>
+        <h1>标签</h1>
+      </div>
+      <div class="mono" style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding-bottom:8px;">
+        21 个标签 · 覆盖 104 篇 · 平均 4.95 篇/标签
+      </div>
+    </div>
+
+    <!-- 分布条 -->
+    <div class="dist">
+      <div class="dseg" style="flex:9;">
+        <div class="dlab"><span>schema</span><span class="n">9</span></div>
+        <div class="dbar" style="opacity:1;"></div>
+      </div>
+      <div class="dseg" style="flex:8;">
+        <div class="dlab"><span>构建</span><span class="n">8</span></div>
+        <div class="dbar" style="opacity:.76;"></div>
+      </div>
+      <div class="dseg" style="flex:8;">
+        <div class="dlab"><span>spring</span><span class="n">8</span></div>
+        <div class="dbar" style="opacity:.58;"></div>
+      </div>
+      <div class="dseg" style="flex:7;">
+        <div class="dlab"><span>多站点</span><span class="n">7</span></div>
+        <div class="dbar" style="opacity:.44;"></div>
+      </div>
+      <div class="dseg" style="flex:7;">
+        <div class="dlab"><span>性能</span><span class="n">7</span></div>
+        <div class="dbar" style="opacity:.30;"></div>
+      </div>
+    </div>
+    <div class="distnote">Top 5 / 21 Tags · 合计 39 篇 · 透明度表示占比</div>
+  </section>
+
+  <section class="wrap" style="padding-top:0;">
+    <div class="taggrid">
+      <a class="tagcell" href="search.html"><span class="tn">schema</span><span class="tc num">9</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">构建</span><span class="tc num">8</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">Spring</span><span class="tc num">8</span></a>
+
+      <a class="tagcell" href="search.html"><span class="tn">多站点</span><span class="tc num">7</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">性能</span><span class="tc num">7</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">设计系统</span><span class="tc num">6</span></a>
+
+      <a class="tagcell" href="search.html"><span class="tn">MySQL</span><span class="tc num">6</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">Vite</span><span class="tc num">5</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">索引</span><span class="tc num">5</span></a>
+
+      <a class="tagcell" href="search.html"><span class="tn">排版</span><span class="tc num">5</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">幂等</span><span class="tc num">4</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">支付</span><span class="tc num">4</span></a>
+
+      <a class="tagcell" href="search.html"><span class="tn">表单</span><span class="tc num">4</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">检索</span><span class="tc num">4</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">日志</span><span class="tc num">4</span></a>
+
+      <a class="tagcell" href="search.html"><span class="tn">AOT</span><span class="tc num">3</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">事务</span><span class="tc num">3</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">安全</span><span class="tc num">3</span></a>
+
+      <a class="tagcell" href="search.html"><span class="tn">组件库</span><span class="tc num">3</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">CI</span><span class="tc num">3</span></a>
+      <a class="tagcell" href="search.html"><span class="tn">复盘</span><span class="tc num">3</span></a>
+    </div>
+
+    <div class="tagfoot">
+      <span>End of index · 21 tags / 104 posts</span>
+      <span>按文章数降序</span>
+    </div>
+  </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal"><span>© 2026 Schematic</span><span>Built with a hand-rolled SSG</span></div>
+    </div>
+  </footer>
+</body>
+</html>

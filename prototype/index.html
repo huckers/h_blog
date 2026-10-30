@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>H_BLOG — 程序员技术博客 · 首页</title>
+<link rel="stylesheet" href="assets/proto.css">
+</head>
+<body>
+
+<!-- ==================== 页头 Bar Row 74 + Rule 1 ==================== -->
+<header class="header">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <span class="wordmark">H_BLOG</span>
+      <span class="sep"></span>
+      <span class="ver">v2.4.1</span>
+    </a>
+    <nav class="nav">
+      <a href="writing.html">文章<i></i></a>
+      <a href="archive.html">归档<i></i></a>
+      <a href="series.html">系列<i></i></a>
+      <a href="about.html">关于<i></i></a>
+    </nav>
+    <div class="head-act">
+      <a class="searchbox" href="search.html">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <circle cx="4.6" cy="4.6" r="3" stroke="#5A554C" stroke-width="1.2"/>
+          <path d="M7 7L10 10" stroke="#5A554C" stroke-width="1.2"/>
+        </svg>
+        <span class="ph">检索</span>
+        <span class="kbd">CMD K</span>
+      </a>
+      <a class="btn-rss" href="confirm.html"><span>订阅 RSS</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== Hero ==================== -->
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="marker"></span><span class="txt">WRITING  /  104 ENTRIES  /  SINCE 2019</span></div>
+    <h1 class="hero-h">把复杂的系统，<br>拆成能读懂的段落。</h1>
+    <p class="hero-sub">关于分布式系统、数据库内核，以及那些在生产环境里被证伪的想法。每篇文章都对应一次真实的故障，或一次真实的返工。</p>
+    <div class="cta">
+      <a class="btn" href="article.html">读最新一篇
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M1 6.5H11.5" stroke="#F2EFE7" stroke-width="1.3"/>
+          <path d="M6.7 2L11.5 6.5L6.7 11" stroke="#F2EFE7" stroke-width="1.3"/>
+        </svg>
+      </a>
+      <a class="link-u" href="archive.html">全部归档<i></i></a>
+    </div>
+  </div>
+
+  <aside class="titleblock">
+    <div class="tb-head"><span class="t">技术档案</span><span class="c">REC / 001</span></div>
+    <div class="tb-row"><span class="k">AUTHOR</span><span class="v">Hucker</span></div>
+    <div class="tb-row"><span class="k">FIELD</span><span class="v sans">分布式系统 · 内核</span></div>
+    <div class="tb-row"><span class="k">ENTRIES</span><span class="v sans">104 篇</span></div>
+    <div class="tb-row"><span class="k">READERS</span><span class="v">12,480</span></div>
+    <div class="tb-row"><span class="k">LAST POST</span><span class="v">2026.10.24</span></div>
+    <div class="tb-row"><span class="k">STACK</span><span class="v quiet">Rust · TS · Go</span></div>
+  </aside>
+</section>
+
+<!-- 度量条 -->
+<div class="wrap">
+  <div class="dim">
+    <span class="tick"></span>
+    <span class="lab">GRID 1440 / 12 COL</span>
+    <span class="line"></span>
+    <span class="lab">104 ENTRIES</span>
+    <span class="tick"></span>
+  </div>
+</div>
+<div class="rule-full"></div>
+
+<!-- ==================== § 01 本期主稿 ==================== -->
+<section class="featured">
+  <div class="shead" style="height:62px;">
+    <div class="left">
+      <span class="num">§ 01</span>
+      <span class="title">本期主稿</span>
+      <span class="rule"></span>
+    </div>
+    <span class="right">FEATURED  —  UPDATED 2026.10.24</span>
+  </div>
+
+  <a class="fcard" href="article.html">
+    <div class="fcopy">
+      <div class="indexrow">
+        <span class="big">01</span>
+        <span class="meta">
+          <span class="l1">2026.10.24    48 MIN READ</span>
+          <span class="l2">12,940 WORDS    PAYMENTS / CONCURRENCY</span>
+        </span>
+      </div>
+      <h2 class="ftitle">在 200 毫秒内关掉一个订单：<br>微信支付里的竞态与自证</h2>
+      <p class="fabs">同一笔订单被重复下单、关单时对方抢付、退款回调迟于对账——三个事故背后是同一件事：我们把「时间」当成了状态。这篇文章复盘我们如何用唯一约束、幂等键与状态机把窗口从 900ms 压到 200ms。</p>
+      <div class="tagrow">
+        <span class="tag">分布式事务</span>
+        <span class="tag">幂等设计</span>
+        <span class="tag">生产事故复盘</span>
+        <span class="tag" style="font-family:var(--mono);">WeChat Pay</span>
+      </div>
+    </div>
+
+    <div class="fdivider"></div>
+
+    <div class="codepanel">
+      <div class="codehead">
+        <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot warm"></span><span class="file">src/pay/notify.ts</span></span>
+      </div>
+      <div class="codebody">
+        <span class="gutter"></span>
+        <div class="codelines">
+          <div class="c">// 原文先落库，再验签</div>
+          <div class="n">const raw = await body()<br>const evt = parser.parse(raw)</div>
+          <div class="c">// 幂等键 = out_trade_no</div>
+          <div class="a">if (!await claim(evt.id)) return 204</div>
+          <div class="n">await settle(evt.amount.total)<br>await notifyUser(evt.out_trade_no)</div>
+        </div>
+      </div>
+      <div class="codefoot"><span>9 行 · 已脱敏</span><span class="r">TS</span></div>
+    </div>
+  </a>
+</section>
+
+<div class="rule-full"></div>
+
+<!-- ==================== § 02 全部文章 ==================== -->
+<section class="ledger">
+  <div class="shead" style="height:52px;">
+    <div class="left">
+      <span class="num">§ 02</span>
+      <span class="title">全部文章</span>
+      <span class="rule"></span>
+    </div>
+    <span class="right">SORTED BY DATE  DESC</span>
+  </div>
+
+  <div class="bodyrow">
+    <div class="gtable">
+      <div class="grid-row thead">
+        <span>NO.</span><span>标题 / TITLE</span><span>TOPIC</span><span>DATE</span><span class="ta-r">MIN</span>
+      </div>
+
+      <a class="grid-row ledger-row" href="article.html">
+        <span class="no">01</span>
+        <span class="tblock"><span class="t">用一个 12 行的 Go 调度器解释 K8s 的 100ms 超时</span><span class="s">go-sched-100ms-timeout</span></span>
+        <span class="topic">KERNEL</span><span class="date">2026.10.18</span><span class="min">18</span>
+      </a>
+      <a class="grid-row ledger-row" href="article.html">
+        <span class="no">02</span>
+        <span class="tblock"><span class="t">我删掉了项目里 62% 的抽象层，然后它变快了</span><span class="s">delete-your-abstractions</span></span>
+        <span class="topic">ARCH</span><span class="date">2026.10.09</span><span class="min">12</span>
+      </a>
+      <a class="grid-row ledger-row" href="article.html">
+        <span class="no">03</span>
+        <span class="tblock"><span class="t">索引失效的七种写法，以及它们的执行计划</span><span class="s">seven-broken-indexes</span></span>
+        <span class="topic">DATABASE</span><span class="date">2026.09.27</span><span class="min">22</span>
+      </a>
+      <a class="grid-row ledger-row" href="article.html">
+        <span class="no">04</span>
+        <span class="tblock"><span class="t">把 feature flag 当成分布式配置会出什么事</span><span class="s">flags-are-not-config</span></span>
+        <span class="topic">SYSTEMS</span><span class="date">2026.09.14</span><span class="min">16</span>
+      </a>
+      <a class="grid-row ledger-row" href="article.html">
+        <span class="no">05</span>
+        <span class="tblock"><span class="t">一次 Rust 生命周期报错的完整推演</span><span class="s">rust-lifetime-trace</span></span>
+        <span class="topic">LANGUAGE</span><span class="date">2026.08.30</span><span class="min">09</span>
+      </a>
+      <a class="grid-row ledger-row" href="article.html" style="border-bottom:none;">
+        <span class="no">06</span>
+        <span class="tblock"><span class="t">日志不是给机器读的</span><span class="s">logs-for-humans</span></span>
+        <span class="topic">OBSERVABILITY</span><span class="date">2026.08.21</span><span class="min">11</span>
+      </a>
+
+      <a class="viewall" href="writing.html">
+        <span class="lab">查看全部 104 篇 →</span>
+        <span class="meta">ARCHIVE.EXE</span>
+      </a>
+    </div>
+
+    <aside class="rail">
+      <div class="topics">
+        <div class="topics-head"><span class="l">TOPICS / 主题</span><span class="c">05</span></div>
+        <a class="topic-row" href="tags.html"><span class="n">分布式系统</span><span class="c">32</span></a>
+        <a class="topic-row" href="tags.html"><span class="n">数据库内核</span><span class="c">24</span></a>
+        <a class="topic-row" href="tags.html"><span class="n">语言与编译器</span><span class="c">19</span></a>
+        <a class="topic-row" href="tags.html"><span class="n">工程实践</span><span class="c">17</span></a>
+        <a class="topic-row" href="tags.html" style="border-bottom:none;"><span class="n">可观测性</span><span class="c">12</span></a>
+        <div class="topics-close"></div>
+      </div>
+
+      <div class="now">
+        <div class="head"><span class="l">NOW / 现在</span><span class="d">2026.10</span></div>
+        <p>读 · DDIA 第七章 事务</p>
+        <p>写 · 一致性模型图谱（草稿 3）</p>
+        <p>修 · 这个博客的渲染引擎</p>
+      </div>
+
+      <form class="subscribe-box" action="confirm.html">
+        <div class="head"><span class="l">SUBSCRIBE / 订阅</span><span class="f">MONTHLY</span></div>
+        <p class="copy">每月一封。新文章、踩到的坑，以及被删掉的那些段落。</p>
+        <label class="input">
+          <span class="ph">you@email.com</span>
+          <span class="go">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2L8.2 6L4 10" stroke="#F2EFE7" stroke-width="1.3"/></svg>
+          </span>
+        </label>
+      </form>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== 页脚 Top 238 + Rule 1 + Bottom 62 ==================== -->
+<footer class="footer">
+  <div class="top">
+    <div class="fleft">
+      <p class="fstatement">写代码，<br>也写对代码的怀疑。</p>
+      <p class="fmeta">BLOG ENGINE v2.4   ·   STATIC   ·   NO TRACKING</p>
+    </div>
+    <div class="flinks">
+      <div class="col nav-col">
+        <span class="head">导航</span>
+        <a class="link" href="writing.html">文章索引</a>
+        <a class="link" href="archive.html">归档</a>
+        <a class="link" href="series.html">系列</a>
+        <a class="link" href="about.html">关于</a>
+      </div>
+      <div class="col feed-col">
+        <span class="head">订阅</span>
+        <a class="link" href="confirm.html">RSS</a>
+        <a class="link" href="confirm.html">邮件通讯</a>
+        <a class="link" href="#">源码</a>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+  <div class="bottom">
+    <span class="copy">2026 Hucker   ·   全部内容以 CC BY-NC 4.0 发布</span>
+    <span class="colophon">DESIGNED IN A TEXT EDITOR   ·   NO FRAMEWORK   ·   1440 GRID</span>
+    <a class="totop" href="#">TOP
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M5 9V1.2" stroke="#B8B2A4" stroke-width="1.2"/>
+        <path d="M1.4 4.8L5 1.2L8.6 4.8" stroke="#B8B2A4" stroke-width="1.2"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>

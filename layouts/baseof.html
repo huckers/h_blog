@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body id="top">
+{{ partial "header.html" . }}
+{{ block "main" . }}{{ end }}
+{{ partial "footer.html" . }}
+<script src="{{ "js/app.js" | relURL }}" defer></script>
+</body>
+</html>

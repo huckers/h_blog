@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>文章 — SCHEMATIC</title>
+<link rel="stylesheet" href="assets/schematic.css">
+<style>
+  .pagehead{padding-top:72px;padding-bottom:30px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--ink);}
+  .pagehead h1{font-size:40px;line-height:1.2;font-weight:500;letter-spacing:-.01em;color:var(--ink);margin-top:16px;}
+  .pagehead .stat{display:flex;gap:36px;padding-bottom:6px;}
+  .pagehead .stat div{text-align:right;}
+  .pagehead .stat b{display:block;font-family:var(--mono);font-size:18px;font-weight:500;color:var(--ink);line-height:1.2;font-variant-numeric:tabular-nums;}
+  .pagehead .stat span{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+
+  .entrylist{display:grid;grid-template-columns:repeat(2,1fr);column-gap:48px;row-gap:0;}
+  /* min-height 而不是 height：两列同高由 grid 行高统一，不靠定高硬撑，
+     否则中文回落字体行高略大时会从中间勒断摘要文字 */
+  .entry{min-height:158px;display:flex;flex-direction:column;padding:24px 0 20px;border-bottom:1px solid var(--hair);}
+  .entry .emeta{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+  .entry .emeta .no{color:var(--signal);}
+  .entry .etitle{font-size:18.5px;line-height:1.5;font-weight:500;color:var(--ink);margin-top:12px;letter-spacing:.005em;}
+  .entry:hover .etitle{color:var(--signal);}
+  .entry .eabs{margin-top:9px;font-size:12.5px;line-height:1.65;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:41px;}
+  .entry .emin{margin-top:auto;padding-top:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--faint);}
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="mark"></span><span class="name">Schematic</span><span class="sub">程序员技术博客</span></a>
+      <nav class="nav">
+        <a class="on" href="articles.html">文章</a>
+        <a href="series.html">系列</a>
+        <a href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <section class="wrap">
+    <div class="pagehead">
+      <div>
+        <div class="kicker">Index / All Posts</div>
+        <h1>文章</h1>
+      </div>
+      <div class="stat">
+        <div><b>104</b><span>篇</span></div>
+        <div><b>06</b><span>主题</span></div>
+        <div><b>12</b><span>页</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:0;">
+    <div class="entrylist">
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">001</span><span>Backend</span><span>2026-10-27</span></div>
+        <div class="etitle">把 CMS 做成多站点：一次 schema 设计的取舍</div>
+        <div class="eabs">单库多站点、还是多库单站点？在四端共用一套内容模型之后，我发现真正决定后期成本的不是表结构，而是「哪些字段允许各站点自定义」这条边界。</div>
+        <div class="emin">14 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">002</span><span>Frontend</span><span>2026-10-24</span></div>
+        <div class="etitle">Vite 冷启动从 8s 到 1.2s 的三次尝试</div>
+        <div class="eabs">第一次靠预构建，第二次靠减依赖，第三次才发现瓶颈根本不在 Vite 上——而是一个被顺手 import 进来的图标库。</div>
+        <div class="emin">11 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">003</span><span>Backend</span><span>2026-10-19</span></div>
+        <div class="etitle">Spring Boot 3 的 AOT 到底省了什么</div>
+        <div class="eabs">启动快了 40%，但镜像大了 60MB，反射相关的代码多了一倍的调试成本。算完这笔账之后，我只在两个服务上开了它。</div>
+        <div class="emin">18 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">004</span><span>Design</span><span>2026-10-15</span></div>
+        <div class="etitle">用 1px 线做界面：反卡片的排版实践</div>
+        <div class="eabs">卡片瀑布流会把所有内容压成同一个重量。改用细线分隔和等宽标注之后，密度上去了，层级反而更清楚。</div>
+        <div class="emin">16 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">005</span><span>Database</span><span>2026-10-09</span></div>
+        <div class="etitle">MySQL 索引下推，别只看文档的例子</div>
+        <div class="eabs">文档里的 ICP 例子太干净了。真实查询里有函数、有隐式转换，下推直接失效，explain 却还是一副很健康的样子。</div>
+        <div class="emin">13 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">006</span><span>Practice</span><span>2026-10-02</span></div>
+        <div class="etitle">微信支付 APIv3 踩坑清单</div>
+        <div class="eabs">三把钥匙各管一段：签名、验签、解密。分不清哪一步挂的，就会在错误的方向改三天代码。</div>
+        <div class="emin">22 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">007</span><span>Frontend</span><span>2026-09-26</span></div>
+        <div class="etitle">Ant Design Vue 4 表单的受控陷阱</div>
+        <div class="eabs">v-model 和 form 的 model 同时存在时，谁是唯一事实来源？一个"偶尔不回显"的 bug 追了两天才落到这里。</div>
+        <div class="emin">9 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">008</span><span>Tooling</span><span>2026-09-18</span></div>
+        <div class="etitle">静态站点的检索，从 lunr 到自研</div>
+        <div class="eabs">中文分词是绕不过去的坎。最后我用 200 行代码换掉了 40KB 的索引库，代价是自己维护一张同义词表。</div>
+        <div class="emin">15 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">009</span><span>Tooling</span><span>2026-09-11</span></div>
+        <div class="etitle">把 CI 从 19 分钟压到 6 分钟</div>
+        <div class="eabs">不是换机器，也不是并行化。真正的收益来自把「每次都要跑」和「只在相关文件变更时跑」分开。</div>
+        <div class="emin">12 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">010</span><span>Practice</span><span>2026-09-03</span></div>
+        <div class="etitle">关于日志：什么时候该打，什么时候是噪音</div>
+        <div class="eabs">线上出问题时，日志的价值不取决于数量，而取决于「能不能只靠它复原一次请求的完整因果」。</div>
+        <div class="emin">17 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">011</span><span>Design</span><span>2026-08-28</span></div>
+        <div class="etitle">设计系统不是组件库：一套令牌撑四个项目</div>
+        <div class="eabs">组件会过时，令牌不会。把颜色、间距、字号抽成三层之后，四个端的视觉一致性第一次变得可校验。</div>
+        <div class="emin">19 min read</div>
+      </a>
+
+      <a class="entry" href="article.html">
+        <div class="emeta"><span class="no">012</span><span>Backend</span><span>2026-08-21</span></div>
+        <div class="etitle">幂等不是加个唯一索引就完了</div>
+        <div class="eabs">并发写、重试、消息重复投递，三种场景要三套做法。唯一索引只解决其中一种，而且会以报错的形式把另外两种暴露给你。</div>
+        <div class="emin">20 min read</div>
+      </a>
+
+    </div>
+
+    <div class="pager mt-40">
+      <span class="mono" style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);">Page 01 / 12</span>
+      <div class="pnums">
+        <a class="on" href="#">01</a>
+        <a href="#">02</a>
+        <a href="#">03</a>
+        <a href="#">04</a>
+        <a href="#">···</a>
+        <a href="#">12</a>
+      </div>
+      <a class="btn-sm" href="#">下一页 →</a>
+    </div>
+  </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal"><span>© 2026 Schematic</span><span>Built with a hand-rolled SSG</span></div>
+    </div>
+  </footer>
+</body>
+</html>

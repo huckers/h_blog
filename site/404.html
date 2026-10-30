@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>404 — SCHEMATIC</title>
+<link rel="stylesheet" href="assets/schematic.css">
+<style>
+  .err{padding-top:96px;}
+  .err .code404{
+    font-family:var(--serif);
+    font-size:230px;
+    line-height:1;
+    letter-spacing:-.02em;
+    color:var(--ink);
+  }
+  .err .code404 .slash{color:var(--signal);}
+  .errgrid{display:grid;grid-template-columns:1fr 420px;column-gap:96px;align-items:start;margin-top:8px;}
+  .errgrid h1{font-size:26px;font-weight:500;line-height:1.5;color:var(--ink);}
+  .errgrid p{margin-top:16px;font-size:14.5px;line-height:1.95;color:var(--muted);max-width:560px;}
+  .errlinks{border-top:1px solid var(--ink);margin-top:26px;}
+  .errlinks a{display:flex;align-items:center;justify-content:space-between;height:52px;border-bottom:1px solid var(--hair);}
+  .errlinks a:hover{background:var(--paper-2);}
+  .errlinks .l{font-size:14px;color:var(--body);}
+  .errlinks .r{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="index.html"><span class="mark"></span><span class="name">Schematic</span><span class="sub">程序员技术博客</span></a>
+      <nav class="nav">
+        <a href="articles.html">文章</a>
+        <a href="series.html">系列</a>
+        <a href="tags.html">标签</a>
+        <a href="archive.html">归档</a>
+        <a href="about.html">关于</a>
+        <a href="search.html">检索</a>
+        <span class="sep"></span>
+        <a class="util" href="subscribe.html">RSS</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page">
+
+  <section class="wrap err">
+    <div class="kicker">HTTP / 404 · Not Found</div>
+    <div class="code404 num">4<span class="slash">/</span>04</div>
+  </section>
+
+  <div class="wrap mt-32">
+    <div class="dim">
+      <span class="txt">Request Did Not Resolve</span>
+      <span class="line"></span>
+      <span class="txt num">2026-10-29 13:15:19 +08:00</span>
+    </div>
+  </div>
+
+  <section class="wrap" style="padding-top:40px;">
+    <div class="errgrid">
+      <div>
+        <h1>这个地址没有对应的图纸。</h1>
+        <p>
+          可能是链接里的编号写错了，也可能是这篇文章被我合并、重命名或干脆删掉了。
+          如果是别处引过来的旧链接，通常是因为 slug 改过——旧地址不会自动跳转，这是我的取舍：
+          与其猜你想看哪一篇，不如让你重新搜一次。
+        </p>
+        <p style="margin-top:14px;">
+          下面几个入口覆盖了大部分意图：找一篇具体的文章、按主题翻、或者直接搜。
+        </p>
+      </div>
+
+      <div>
+        <div class="rail-title"><span>Try Instead</span><span class="num">04</span></div>
+        <div class="errlinks">
+          <a href="index.html"><span class="l">回首页，看最近入库</span><span class="r">Index</span></a>
+          <a href="articles.html"><span class="l">全部 104 篇文章</span><span class="r">All Posts</span></a>
+          <a href="archive.html"><span class="l">按年份回溯</span><span class="r">Archive</span></a>
+          <a href="search.html"><span class="l">直接检索关键词</span><span class="r">Search</span></a>
+        </div>
+        <div class="rule-ink gap"></div>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="top">
+        <div class="fnote">
+          <strong>About this site</strong>
+          一个程序员的工作图纸。内容按 CC BY-NC-SA 4.0 授权，转载保留出处。
+        </div>
+        <div class="links">
+          <dl><dt>Feed</dt><dd><a href="subscribe.html">RSS</a></dd><dd><a href="subscribe.html">邮件订阅</a></dd></dl>
+          <dl><dt>Code</dt><dd><a href="#">GitHub</a></dd><dd><a href="#">Gitee</a></dd></dl>
+          <dl><dt>Contact</dt><dd><a href="#">hi@schematic.dev</a></dd></dl>
+        </div>
+      </div>
+      <div class="legal"><span>© 2026 Schematic</span><span>Built with a hand-rolled SSG</span></div>
+    </div>
+  </footer>
+</body>
+</html>

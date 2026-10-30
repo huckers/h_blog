@@ -1,0 +1,104 @@
+{{ define "main" }}
+{{ $isSeries := eq .Data.Plural "series" }}
+{{ $posts := .Pages.ByDate }}
+{{ $n := len $posts }}
+{{ $first := index $posts 0 }}
+{{ $last := index $posts (sub $n 1) }}
+
+{{ if $isSeries }}
+{{/* ---------- 单个系列：大编号 + 进度刻度 + 分期列表 ---------- */}}
+<div class="series-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">SERIES  /  系列</span></div>
+  <div class="series-title-row">
+    <span class="series-num">{{ printf "%02d" $n }}</span>
+    <div class="series-title-col">
+      <h1>{{ .Title }}</h1>
+      <p>{{ $n }} 篇，从 {{ $first.Date.Format "2006.01" }} 写到 {{ $last.Date.Format "2006.01" }}。按顺序读，跳读也成立。</p>
+    </div>
+  </div>
+  <div class="series-meta">
+    <span class="l">{{ $n }} 篇   ·   {{ index $first.Params.tags 0 }}</span>
+    <span class="status-chip">{{ if eq $last.Date.Year now.Year }}进行中{{ else }}已完结{{ end }}</span>
+  </div>
+</div>
+
+<div class="ticks">
+  <div class="tickbars">
+    {{ range $i, $p := $posts }}
+    <div class="tick"><span class="bar"></span><span class="lab">{{ printf "P%02d" (add $i 1) }}</span></div>
+    {{ end }}
+  </div>
+  <div class="tickcap">
+    <span>{{ $first.Date.Format "2006.01" }} 起</span>
+    <span>{{ $n }} PARTS</span>
+  </div>
+</div>
+
+<div class="series-wrap">
+  <div class="series-main">
+    <div>
+      <div class="parts-head">
+        <span class="k pre">分期 / PARTS</span>
+        <span class="v pre">{{ $n }} 篇   ·   {{ $first.Date.Format "2006.01" }} — {{ $last.Date.Format "2006.01" }}</span>
+      </div>
+      {{ range $i, $p := $posts }}
+      <a class="part-row" href="{{ $p.RelPermalink }}">
+        <span class="n">{{ printf "%02d" (add $i 1) }}</span>
+        <span class="t">{{ $p.Title }}</span>
+        <span class="s pre">{{ index $p.Params.tags 0 }}</span>
+        <span class="d">{{ $p.Date.Format "2006.01.02" }}</span>
+      </a>
+      {{ end }}
+      <div class="closing-rule"></div>
+      <div class="parts-foot">
+        <span class="l">{{ $n }} PARTS   ·   {{ $first.Date.Format "2006.01" }} 起</span>
+        <a class="r" href="{{ "series/" | relURL }}">全部系列 →</a>
+      </div>
+    </div>
+  </div>
+
+  <aside class="series-rail">
+    <div>
+      <div class="spec-head"><span class="l">SPEC / 规格</span><span class="r">{{ printf "%02d" $n }}</span></div>
+      <div class="spec-row"><span class="k">PARTS</span><span class="v">{{ $n }}</span></div>
+      <div class="spec-row"><span class="k">SPAN</span><span class="v">{{ $first.Date.Format "2006.01" }} — {{ $last.Date.Format "2006.01" }}</span></div>
+      <div class="spec-row"><span class="k">FIRST</span><span class="v">{{ $first.Date.Format "2006.01.02" }}</span></div>
+      <div class="spec-row"><span class="k">LATEST</span><span class="v">{{ $last.Date.Format "2006.01.02" }}</span></div>
+    </div>
+
+    <div class="sub-note">
+      <span class="h">READ ORDER</span>
+      <p>系列文章之间互相引用，建议从第 01 篇读起。</p>
+      <a href="{{ $first.RelPermalink }}">从第一篇开始 →</a>
+    </div>
+  </aside>
+</div>
+
+{{ else }}
+{{/* ---------- 单个标签 ---------- */}}
+<section class="page-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">TAG  /  主题</span></div>
+  <div class="titlerow">
+    <h1 class="h1">{{ .Title }}</h1>
+    <p class="aside">{{ $n }} 篇。按发布时间倒序。</p>
+  </div>
+  <div class="metarow">
+    <span class="l pre">{{ $n }} 篇   ·   {{ $first.Date.Format "2006.01" }} — {{ $last.Date.Format "2006.01" }}</span>
+    <a class="r" href="{{ "tags/" | relURL }}">全部主题 →</a>
+  </div>
+</section>
+
+<div class="catalog">
+  {{ range $i, $p := $posts.Reverse }}
+  <a class="entry" href="{{ $p.RelPermalink }}">
+    <span class="meta">
+      <span class="l pre">{{ printf "%02d" (add $i 1) }}   ·   {{ index $p.Params.tags 0 }}</span>
+      <span class="r pre">{{ $p.Date.Format "2006.01.02" }}   ·   {{ partial "readtime.html" $p }} MIN</span>
+    </span>
+    <h2 class="t">{{ $p.Title }}</h2>
+    <p class="a">{{ $p.Params.summary }}</p>
+  </a>
+  {{ end }}
+</div>
+{{ end }}
+{{ end }}

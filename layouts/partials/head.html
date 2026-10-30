@@ -1,0 +1,44 @@
+{{ $title := site.Title }}
+{{ if not .IsHome }}
+  {{ $title = printf "%s — %s" .Title site.Title }}
+{{ else }}
+  {{ $title = printf "%s — 程序员技术博客" site.Title }}
+{{ end }}
+
+{{ $desc := site.Params.intro }}
+{{ with .Description }}{{ $desc = . }}{{ else }}{{ with .Summary }}{{ $desc = . }}{{ end }}{{ end }}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $desc }}">
+<meta name="author" content="{{ site.Params.author }}">
+
+<link rel="canonical" href="{{ .Permalink }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta name="twitter:card" content="summary">
+
+{{ with .OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">
+{{ end }}
+<link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+
+{{ $proto := resources.Get "css/proto.css" | minify | fingerprint }}
+{{ $md := resources.Get "css/markdown.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $proto.RelPermalink }}" integrity="{{ $proto.Data.Integrity }}">
+<link rel="stylesheet" href="{{ $md.RelPermalink }}" integrity="{{ $md.Data.Integrity }}">
+
+{{ if .IsPage }}
+{{ $ld := dict
+  "@context" "https://schema.org"
+  "@type" "BlogPosting"
+  "headline" .Title
+  "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+  "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+  "author" (dict "@type" "Person" "name" site.Params.author)
+  "description" $desc
+}}
+<script type="application/ld+json">{{ $ld | jsonify }}</script>
+{{ end }}

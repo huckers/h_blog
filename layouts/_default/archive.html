@@ -1,0 +1,66 @@
+{{ define "main" }}
+{{ $posts := (where site.RegularPages "Section" "writing").ByDate.Reverse }}
+{{ $n := len $posts }}
+{{ $years := $posts.GroupByDate "2006" }}
+{{ $newest := index $posts 0 }}
+{{ $oldest := index $posts (sub $n 1) }}
+
+{{/* 页头沿用 .page-head，与文章/标签/关于页同一套排印：
+     红点 labelrow、76px/200 的细体标题、底部 metarow。
+     原来的 .arch-top 是另一套样式（44px/700 + 右侧统计），
+     和全站标题语言不一致，这里把统计挪到 titlerow 右侧。 */}}
+<section class="page-head">
+  <div class="labelrow"><span class="dot"></span><span class="txt pre">ARCHIVE  /  {{ $oldest.Date.Format "2006" }} — {{ $newest.Date.Format "2006" }}  /  完整索引</span></div>
+  <div class="titlerow statsrow">
+    <h1 class="h1">{{ .Title }}</h1>
+    <div class="stats">
+      <div class="stat"><span class="v">{{ $n }}</span><span class="l">篇文章</span></div>
+      <div class="stat"><span class="v">{{ len $years }}</span><span class="l">年</span></div>
+      <div class="stat"><span class="v sig">{{ len site.Taxonomies.tags }}</span><span class="l">主题</span></div>
+    </div>
+  </div>
+  <p class="arch-sub">{{ .Params.summary | default "全部文章按年份排列。年份标题上的数字是该年产出。" }}</p>
+  <div class="metarow">
+    <span class="l pre">{{ $n }} 篇   ·   {{ len site.Taxonomies.tags }} 个主题   ·   {{ $oldest.Date.Format "2006.01" }} — {{ $newest.Date.Format "2006.01" }}</span>
+    <a class="r" href="{{ "index.xml" | relURL }}">RSS</a>
+  </div>
+</section>
+
+<div class="filter-row">
+  <a class="chip on" href="{{ "writing/" | relURL }}">全部</a>
+  {{ $taglist := sort (partial "tag-list.html" .) "count" "desc" }}
+  {{ range first 5 $taglist }}
+  <a class="chip off" href="{{ .url | relURL }}">{{ .name }}</a>
+  {{ end }}
+  <span class="spacer"></span>
+  <span class="hint">SINGLE SELECT   ·   SORTED DESC</span>
+</div>
+<div class="rule-full" style="background:var(--ink);"></div>
+
+<div class="arch-body">
+  <div class="acol head">
+    <span>日期</span><span>标题 / TITLE</span><span>主题</span><span class="ta-r">MIN</span>
+  </div>
+
+  {{ range $years }}
+  <div class="yearrow">
+    <span class="y">{{ .Key }}</span>
+    <span class="c">{{ len .Pages }} ENTRIES</span>
+    <span class="r"></span>
+  </div>
+  {{ range .Pages }}
+  <a class="acol arow" href="{{ .RelPermalink }}">
+    <span class="d">{{ .Date.Format "01.02" }}</span>
+    <span class="t">{{ .Title }}</span>
+    <span class="tp">{{ index .Params.tags 0 | upper }}</span>
+    <span class="m">{{ partial "readtime.html" . }}</span>
+  </a>
+  {{ end }}
+  {{ end }}
+
+  <div class="endrow">
+    <span class="l">END OF ARCHIVE   ·   {{ $n }} ENTRIES</span>
+    <a class="r" href="{{ "index.xml" | relURL }}">订阅 RSS →</a>
+  </div>
+</div>
+{{ end }}
