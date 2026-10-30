@@ -192,6 +192,28 @@ scripts/
 - `1.` 列表 → 衬线体红色序号
 - 表格 → 1px 细线，等宽表头
 
+## 授权
+
+**分层授权：文字 CC BY-NC 4.0，代码 MIT。**
+
+| 对象 | 许可证 | 覆盖范围 |
+|---|---|---|
+| 文字 | [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) | `content/`、`prototype/`、`site/` |
+| 代码 | [MIT](./LICENSE-CODE) | `layouts/`、`scripts/`、`assets/css/`、`static/js/`、正文代码块 |
+
+分开的原因是 Creative Commons 官方 FAQ 明确**不建议**把 CC 用于软件——不含源码分发条款、不涉及专利、与主流软件许可证不兼容。这不是自创规则。
+
+参数在 `hugo.toml`，模板从 `licenseUrl` / `codeLicense` / `codeLicenseUrl` 读：
+
+```toml
+license        = "CC BY-NC 4.0"
+licenseUrl     = "https://creativecommons.org/licenses/by-nc/4.0/"
+codeLicense    = "MIT"
+codeLicenseUrl = "https://gitee.com/hucker/h_blog/blob/main/LICENSE-CODE"
+```
+
+页脚和关于页的规格表都带 `rel="license"` 链接——CC 的署名条款要求「附上许可证链接」，自己先做对，别人转载时才有地方链回来。
+
 ## 本地没有 hugo 时
 
 ```bash

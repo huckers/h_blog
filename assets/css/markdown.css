@@ -784,6 +784,21 @@
     gap: 40px;
   }
 
+  /* 页脚底部原本是 62px 定高、三个元素一行。
+     加上许可证链接后窄屏放不下，改成允许换行、文案独占一行。 */
+  .footer .bottom {
+    height: auto;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+    padding: 16px var(--pad);
+  }
+
+  .footer .copy {
+    flex: 1 0 100%;
+    line-height: 19px;
+  }
+
   .indexrow .big {
     font-size: 44px;
   }

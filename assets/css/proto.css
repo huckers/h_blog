@@ -164,6 +164,12 @@ ul,ol{list-style:none;}
   height:62px;display:flex;align-items:center;justify-content:space-between;
 }
 .footer .copy{font-size:11px;color:var(--dark-dim);}
+/* 许可证链接：CC 署名条款要求"附上许可证链接"，页脚这两个是可点的 */
+.footer .copy a{
+  color:#B8B2A4;border-bottom:1px solid var(--dark-rule);
+  transition:color .14s ease,border-color .14s ease;
+}
+.footer .copy a:hover{color:var(--paper);border-color:var(--paper);}
 .footer .colophon{font-family:var(--mono);font-size:11px;letter-spacing:1.2px;color:var(--dark-dimmer);}
 .footer .totop{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:1.4px;color:#B8B2A4;}
 
@@ -623,6 +629,9 @@ ul,ol{list-style:none;}
 .spec-row2 .v{flex:1 1 auto;font-size:13.5px;color:var(--ink);}
 .spec-row2 .v.mono{font-family:var(--mono);}
 .spec-row2 .v.link{font-family:var(--mono);color:var(--link);}
+/* 规格表内的许可证链接（文字 CC / 代码 MIT） */
+.spec-row2 .v a{border-bottom:1px solid var(--hair);transition:border-color .14s ease,color .14s ease;}
+.spec-row2 .v a:hover{color:var(--ink);border-color:var(--ink);}
 
 .stack-grid{display:flex;gap:40px;padding:20px 12px 0;}
 .stack-col{flex:1 1 0;display:flex;flex-direction:column;gap:9px;min-width:0;}
