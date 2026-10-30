@@ -296,7 +296,7 @@ Worker 名称必须是 `h-blog`，与 `wrangler.toml` 的 `name` 一致；它同
 | Preview command | `npx wrangler preview`（默认值，不改；仅非生产分支触发） |
 | Build variable | `HUGO_VERSION` = `0.169.0` |
 
-`HUGO_VERSION` 必须设。Workers Builds 镜像预装的是 **Hugo extended 0.147.7**，本项目用到 0.169 的能力，不设会以一个指向模板文件的报错失败，报错里不提版本。
+`HUGO_VERSION` 建议设成 `0.169.0`，与本地一致。构建镜像预装的是 **Hugo extended 0.147.7**，不设**不会构建失败**，而是静默产出版本相关的差异——本项目实测过一次：首页最后一行少了 `style="border-bottom:none;"`，多出一条本不该有的分隔线，构建日志里没有任何提示。模板层已经改成不依赖版本行为（见 `docs/TROUBLESHOOTING.md`），但钉住版本仍是为了让线上产物与本地逐字节可比。
 
 变量位置是 **Settings → Build → Build Variables and Secrets**，不是 Settings → Environment variables——后者是运行时变量，构建期读不到。
 
